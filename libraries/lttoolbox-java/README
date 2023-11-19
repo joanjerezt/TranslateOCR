@@ -1,0 +1,76 @@
+README FILE OF LTTOOLBOX-JAVA
+
+This is a binary compatible Java port of Apertiums lttoolbox.
+
+It is designed as a replacement, so all input and output is the same, and binary files can be compiled with C version and used by the Java version, and vice versa.
+
+
+
+Find further information on:
+http://wiki.apertium.org/wiki/Lttoolbox-java
+
+
+1. Programs
+
+	lt-comp-j   -> compiler, execute without parameters to show the
+                     instructions of use.
+
+	lt-proc-j   -> processor, works with options -a (lexical analyser, 
+                     default option), -g (lexical generator) and -p 
+                    (lexical post-generator).  Using -h will show all 
+                    flags.
+
+	lt-expand-j -> generates all the pairs of transductions of a given
+	             dictionary.  Execute without parameters to show the
+                     instructions of use.
+
+2. Install
+
+	a. Requirements:
+	        - i686, ppc, SPARC, etc.
+		- JDK 1.8 or later
+		- Netbeans or ant version 1.6.5 or later
+
+	b. Building & installing
+		- sh autogen.sh
+		- make
+		- sudo make install
+
+	b.2 Building & installing using Maven 2 (http://maven.apache.org)
+		- mvn install
+
+
+
+COMPATIBILITY AND PERFORMANCE
+
+Compatibility can be checked by invoking test_java_and_c.sh in testdata/regression.
+
+C analysis is... 0.39sec
+OK
+Java analysis is... 1.85sec
+OK
+C generator -g is ... 0.32sec
+OK
+Java generator -g is ... 2.01sec
+OK
+C generator -d is ... 0.85sec
+OK
+Java generator -d is ... 2.14sec
+OK
+C generator -n is ... 0.92sec
+OK
+Java generator -n is ... 1.77sec
+OK
+C postgenerator -p is ... 0.04sec
+OK
+Java postgenerator -p is ... 0.81sec
+OK
+All tests passed
+
+As you see Java version is currently (jan 2010) a factor 2-8 slower than the C version.
+It still gives great performance, however, and Apertium running on Java is very fast, compared to other MT systems.
+
+There are currently (jan 2010) problems compiling some very seldom strange constructs (testdata/strange.dix).
+You can use the C version to compile these, and the binary files will work fine when used from lttoolbox-java.
+
+
