@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "TranslateOCR"
-include(":app")
+include(":app", "libraries:lttoolbox-java", "libraries:tesseract4android")
