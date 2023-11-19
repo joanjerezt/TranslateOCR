@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TranslateOCR</string>
+    <string name="title_home">Home</string>
+    <string name="title_history">History</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="title_dictionaries">Dictionaries</string>
+    <string name="textview">English</string>
+    <string name="textview2">Català</string>
+    <string name="title_settings">Settings</string>
+    <!-- Preference Titles -->
+    <string name="languages_header">Languages</string>
+    <string name="features_header">Features</string>
+    <string name="help_header">Help</string>
+    <!-- Sync Preferences -->
+    <string name="unknown_title">Mark unknown words</string>
+    <!-- <string name="ocr_title">OCR</string>
+    <string name="tts_title">Text to Speech</string>
+    <string name="stt_title">Speech to Text</string> -->
+    <string name="translate">Translate</string>
+    <string name="download">Download</string>
+</resources>
