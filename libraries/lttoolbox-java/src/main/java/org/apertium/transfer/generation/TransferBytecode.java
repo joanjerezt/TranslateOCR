@@ -14,6 +14,7 @@ import com.sun.org.apache.bcel.internal.generic.IFEQ;
 import com.sun.org.apache.bcel.internal.generic.IFLE;
 import com.sun.org.apache.bcel.internal.generic.IFNE;
 /* JDK 8 imports */
+/*
 import static com.sun.org.apache.bcel.internal.Constants.ACC_PRIVATE;
 import static com.sun.org.apache.bcel.internal.Constants.ACC_PUBLIC;
 import static com.sun.org.apache.bcel.internal.Constants.ACC_SUPER;
@@ -30,7 +31,8 @@ import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.ISUB
 import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.NOP;
 import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.POP;
 import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.RETURN;
-/* JDK11 imports would be the following:
+*/
+/* JDK11 imports would be the following: */
 
 import static com.sun.org.apache.bcel.internal.Const.ACC_PRIVATE;
 import static com.sun.org.apache.bcel.internal.Const.ACC_PUBLIC;
@@ -49,7 +51,7 @@ import static com.sun.org.apache.bcel.internal.generic.InstructionConst.NOP;
 import static com.sun.org.apache.bcel.internal.generic.InstructionConst.POP;
 import static com.sun.org.apache.bcel.internal.generic.InstructionConst.RETURN;
 
- - but its not that easy to import private APIs anymore, so it might be better to include bcel as dependency,
+/* - but its not that easy to import private APIs anymore, so it might be better to include bcel as dependency,
 or source /usr/lib/jvm/java-8-openjdk-amd64/src.zip!/com/sun/org/apache/bcel/internal/Constants.java
 and  /usr/lib/jvm/java-8-openjdk-amd64/src.zip!/com/sun/org/apache/bcel/internal/generic/InstructionConstants.java
 et al
