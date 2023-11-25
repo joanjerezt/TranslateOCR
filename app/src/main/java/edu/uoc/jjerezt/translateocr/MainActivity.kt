@@ -3,6 +3,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
@@ -95,11 +96,27 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             // Do something in response to button click
             println("Button pressed")
-            var orig_language = "en";
-            var dest_language = "ca";
-
+            val orig_language = "en";
+            val dest_language = "ca";
+            var text : EditText = findViewById(R.id.editTextTextMultiLine)
+            var text_sortida = translate(orig_language, dest_language, text.text.toString())
+            var text2: EditText = findViewById(R.id.editTextTextMultiLine2)
+            text2.setText(text_sortida);
         }
 
+
+    }
+
+    private fun translate(origLanguage: String, destLanguage: String, text: String): String {
+        if (origLanguage == "en" && destLanguage == "ca")
+        {
+            return if (text == "Hello"){
+                "Hola"
+            } else{
+                "No ho sé"
+            }
+        }
+        return "No disponible"
 
     }
 }
