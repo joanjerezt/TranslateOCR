@@ -2,6 +2,7 @@ package edu.uoc.jjerezt.translateocr
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
@@ -18,9 +19,40 @@ import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    /* fun <TranslationCallback, ExceptionCallback> translate(
+        text: String?,
+        markUnknown: Boolean,
+        translationCallback: TranslationCallback,
+        exceptionCallback: ExceptionCallback?)
+    {
+        TranslationTask(
+            translationCallback,
+            exceptionCallback,
+            markUnknown
+        ).execute(text);
+    }
+
+    fun translate(
+        text: String?,
+        translationCallback: com.mitzuli.core.mt.MtPackage.TranslationCallback?,
+        exceptionCallback: ExceptionCallback?,
+        markUnknown: Boolean,
+        htmlOutput: Boolean
+    ) {
+        markUsage()
+        com.mitzuli.core.mt.MtPackage.TranslationTask(
+            translationCallback,
+            exceptionCallback,
+            markUnknown,
+            htmlOutput
+        ).execute(text)
+    } */
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
+        // https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
         val screen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
@@ -58,5 +90,16 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val button: Button = findViewById(R.id.button)
+        button.setOnClickListener {
+            // Do something in response to button click
+            println("Button pressed")
+            var orig_language = "en";
+            var dest_language = "ca";
+
+        }
+
+
     }
 }
