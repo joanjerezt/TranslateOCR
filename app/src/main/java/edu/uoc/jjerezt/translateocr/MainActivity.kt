@@ -1,9 +1,11 @@
 package edu.uoc.jjerezt.translateocr
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
@@ -11,7 +13,20 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dalvik.system.DexClassLoader
 import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
+import edu.uoc.jjerezt.translateocr.runtime.Asset
+import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
+import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.util.jar.JarFile
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 
 /*
 * 2023-2024 Joan Jerez Torres
@@ -20,34 +35,29 @@ import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    /* fun <TranslationCallback, ExceptionCallback> translate(
-        text: String?,
-        markUnknown: Boolean,
-        translationCallback: TranslationCallback,
-        exceptionCallback: ExceptionCallback?)
-    {
-        TranslationTask(
-            translationCallback,
-            exceptionCallback,
-            markUnknown
-        ).execute(text);
+    private val unknownPattern = Pattern.compile("\\B\\*((\\p{L}||\\p{N})+)\\b")
+
+    private fun escape(s: String?, htmlOutput: Boolean): String? {
+        return if (htmlOutput) TextUtils.htmlEncode(s).replace("\n".toRegex(), "<br/>") else s
     }
 
-    fun translate(
-        text: String?,
-        translationCallback: com.mitzuli.core.mt.MtPackage.TranslationCallback?,
-        exceptionCallback: ExceptionCallback?,
-        markUnknown: Boolean,
-        htmlOutput: Boolean
-    ) {
-        markUsage()
-        com.mitzuli.core.mt.MtPackage.TranslationTask(
-            translationCallback,
-            exceptionCallback,
-            markUnknown,
-            htmlOutput
-        ).execute(text)
-    } */
+    private fun format(s: String, htmlOutput: Boolean, markUnknown: Boolean): String {
+        val matcher: Matcher = unknownPattern.matcher(s)
+        val sb = StringBuilder()
+
+        if (htmlOutput) sb.append("<html>")
+        var prevEnd = 0
+        while (matcher.find()) {
+            sb.append(escape(s.substring(prevEnd, matcher.start()), htmlOutput))
+            if (markUnknown) sb.append(if (htmlOutput) "<font color='#EE0000'>" else "*")
+            sb.append(escape(matcher.group(1),htmlOutput))
+            if (markUnknown && htmlOutput) sb.append("</font>")
+            prevEnd = matcher.end()
+        }
+        sb.append(escape(s.substring(prevEnd), htmlOutput))
+        if (htmlOutput) sb.append("</html>")
+        return sb.toString()
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -96,27 +106,67 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             // Do something in response to button click
             println("Button pressed")
-            val orig_language = "en";
-            val dest_language = "ca";
-            var text : EditText = findViewById(R.id.editTextTextMultiLine)
-            var text_sortida = translate(orig_language, dest_language, text.text.toString())
-            var text2: EditText = findViewById(R.id.editTextTextMultiLine2)
+            val orig_language : TextView = findViewById(R.id.textView);
+            val dest_language : TextView = findViewById(R.id.textView2);
+            val text : EditText = findViewById(R.id.editTextTextMultiLine)
+            val text_sortida = translate(orig_language.text.toString(), dest_language.text.toString(), text.text.toString())
+            val text2: EditText = findViewById(R.id.editTextTextMultiLine2)
             text2.setText(text_sortida);
         }
 
 
     }
 
-    private fun translate(origLanguage: String, destLanguage: String, text: String): String {
-        if (origLanguage == "en" && destLanguage == "ca")
-        {
-            return if (text == "Hello"){
-                "Hola"
-            } else{
-                "No ho sé"
-            }
-        }
-        return "No disponible"
 
+    private fun translate(origLanguage: String, destLanguage: String, text: String): String {
+
+        val file = Asset().copyAssetToCache(this, "apertium-en-ca.jar")
+
+        /* try{
+            Asset().extractJarFile(file)
+        }
+        catch(e: Exception){
+            print(e.localizedMessage)
+        } */
+
+        val htmlOutput = false;
+        val markUnknown = true;
+        val offline = OfflineServiceProvider(
+            code = "ca-en",
+            dir =  file.parentFile!!,
+        )
+
+        val jar = File(offline.dir, "classes.dex")
+        print("JAR:" + jar.absolutePath + "\n")
+        print("Directori" + offline.dir + "\n")
+
+        val safeCacheDir = File(File(this.cacheDir, "packages"), "safe")
+        fun getSafeCacheDir(): File {
+            safeCacheDir.mkdirs()
+            return safeCacheDir
+        }
+
+        val classLoader: ClassLoader = DexClassLoader(
+            jar.absolutePath,
+            getSafeCacheDir().absolutePath,
+            null,
+            javaClass.classLoader
+        )
+
+        val internalCacheDir = File(File(this.cacheDir, "packages"), "cache")
+        var htmlResult = ""
+
+        htmlResult = format(
+                ApertiumTranslator(
+                    offline.code,
+                    offline.dir,
+                    internalCacheDir,
+                    classLoader
+                ).translate(text), htmlOutput, markUnknown
+            )
+
+        print(htmlResult)
+
+        return htmlResult
     }
 }

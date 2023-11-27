@@ -32,6 +32,11 @@ class DictionaryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dictionary_list, container, false)
 
+        // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs
+        // val items: ArrayList<String> = ["af-nl", "ca-it", "en-ca", "en-es", "en-gl", "eo-ca"]
+        // val col: Collection<String> =
+        // items.addAll()
+
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {

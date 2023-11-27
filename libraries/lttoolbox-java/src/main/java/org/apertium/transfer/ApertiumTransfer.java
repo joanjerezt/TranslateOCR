@@ -188,6 +188,7 @@ public class ApertiumTransfer {
      */
     Transfer t = null;
     String tRulesOrClassString = argv[optind + 1];
+    System.out.println("\nPath XML: " + tRulesOrClassString);
     String preProc = argv[optind + 2];
     String bilTrans = useBD ? argv[optind + 3] : null;
     String key = tRulesOrClassString + "; " + preProc + "; " + bilTrans;

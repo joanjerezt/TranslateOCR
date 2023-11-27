@@ -4,67 +4,6 @@
  */
 package org.apertium.transfer.generation;
 
-import com.sun.org.apache.bcel.internal.generic.ArrayType;
-import com.sun.org.apache.bcel.internal.generic.BranchHandle;
-import com.sun.org.apache.bcel.internal.generic.ClassGen;
-import com.sun.org.apache.bcel.internal.generic.ConstantPoolGen;
-import com.sun.org.apache.bcel.internal.generic.FieldGen;
-import com.sun.org.apache.bcel.internal.generic.GOTO;
-import com.sun.org.apache.bcel.internal.generic.IFEQ;
-import com.sun.org.apache.bcel.internal.generic.IFLE;
-import com.sun.org.apache.bcel.internal.generic.IFNE;
-/* JDK 8 imports */
-/*
-import static com.sun.org.apache.bcel.internal.Constants.ACC_PRIVATE;
-import static com.sun.org.apache.bcel.internal.Constants.ACC_PUBLIC;
-import static com.sun.org.apache.bcel.internal.Constants.ACC_SUPER;
-import static com.sun.org.apache.bcel.internal.Constants.INVOKEINTERFACE;
-import static com.sun.org.apache.bcel.internal.Constants.INVOKESPECIAL;
-import static com.sun.org.apache.bcel.internal.Constants.INVOKESTATIC;
-import static com.sun.org.apache.bcel.internal.Constants.INVOKEVIRTUAL;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.ARRAYLENGTH;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.DUP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.ICONST_0;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.ICONST_1;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.IRETURN;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.ISUB;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.NOP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.POP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConstants.RETURN;
-*/
-/* JDK11 imports would be the following: */
-
-import static com.sun.org.apache.bcel.internal.Const.ACC_PRIVATE;
-import static com.sun.org.apache.bcel.internal.Const.ACC_PUBLIC;
-import static com.sun.org.apache.bcel.internal.Const.ACC_SUPER;
-import static com.sun.org.apache.bcel.internal.Const.INVOKEINTERFACE;
-import static com.sun.org.apache.bcel.internal.Const.INVOKESPECIAL;
-import static com.sun.org.apache.bcel.internal.Const.INVOKESTATIC;
-import static com.sun.org.apache.bcel.internal.Const.INVOKEVIRTUAL;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.ARRAYLENGTH;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.DUP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.ICONST_0;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.ICONST_1;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.IRETURN;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.ISUB;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.NOP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.POP;
-import static com.sun.org.apache.bcel.internal.generic.InstructionConst.RETURN;
-
-/* - but its not that easy to import private APIs anymore, so it might be better to include bcel as dependency,
-or source /usr/lib/jvm/java-8-openjdk-amd64/src.zip!/com/sun/org/apache/bcel/internal/Constants.java
-and  /usr/lib/jvm/java-8-openjdk-amd64/src.zip!/com/sun/org/apache/bcel/internal/generic/InstructionConstants.java
-et al
-*/
-
-import com.sun.org.apache.bcel.internal.generic.InstructionFactory;
-import static com.sun.org.apache.bcel.internal.generic.InstructionFactory.*;
-import com.sun.org.apache.bcel.internal.generic.InstructionHandle;
-import com.sun.org.apache.bcel.internal.generic.InstructionList;
-import com.sun.org.apache.bcel.internal.generic.MethodGen;
-import com.sun.org.apache.bcel.internal.generic.TargetLostException;
-import com.sun.org.apache.bcel.internal.generic.Type;
-import static com.sun.org.apache.bcel.internal.generic.Type.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -78,7 +17,53 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.bcel.generic.ArrayType;
+import org.apache.bcel.generic.BranchHandle;
+import org.apache.bcel.generic.ClassGen;
+import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.FieldGen;
+import org.apache.bcel.generic.GOTO;
+import org.apache.bcel.generic.IFEQ;
+import org.apache.bcel.generic.IFLE;
+import org.apache.bcel.generic.IFNE;
+import org.apache.bcel.generic.InstructionFactory;
+import org.apache.bcel.generic.InstructionHandle;
+import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.TargetLostException;
+import org.apache.bcel.generic.Type;
 import org.apertium.CommandLineInterface;
+
+import static org.apache.bcel.Const.ACC_PRIVATE;
+import static org.apache.bcel.Const.ACC_PUBLIC;
+import static org.apache.bcel.Const.ACC_SUPER;
+import static org.apache.bcel.Const.INVOKEINTERFACE;
+import static org.apache.bcel.Const.INVOKESPECIAL;
+import static org.apache.bcel.Const.INVOKESTATIC;
+import static org.apache.bcel.Const.INVOKEVIRTUAL;
+import static org.apache.bcel.generic.InstructionConst.ARRAYLENGTH;
+import static org.apache.bcel.generic.InstructionConst.DUP;
+import static org.apache.bcel.generic.InstructionConst.ICONST_0;
+import static org.apache.bcel.generic.InstructionConst.ICONST_1;
+import static org.apache.bcel.generic.InstructionConst.IRETURN;
+import static org.apache.bcel.generic.InstructionConst.ISUB;
+import static org.apache.bcel.generic.InstructionConst.NOP;
+import static org.apache.bcel.generic.InstructionConst.POP;
+import static org.apache.bcel.generic.InstructionConst.RETURN;
+import static org.apache.bcel.generic.InstructionFactory.createArrayLoad;
+import static org.apache.bcel.generic.InstructionFactory.createArrayStore;
+import static org.apache.bcel.generic.InstructionFactory.createLoad;
+import static org.apache.bcel.generic.InstructionFactory.createStore;
+import static org.apache.bcel.generic.InstructionFactory.createThis;
+import static org.apache.bcel.generic.Type.BOOLEAN;
+import static org.apache.bcel.generic.Type.CHAR;
+import static org.apache.bcel.generic.Type.INT;
+import static org.apache.bcel.generic.Type.NO_ARGS;
+import static org.apache.bcel.generic.Type.OBJECT;
+import static org.apache.bcel.generic.Type.STRING;
+import static org.apache.bcel.generic.Type.VOID;
+import static org.apache.bcel.generic.Type.getType;
 import static org.apertium.transfer.generation.DOMTools.*;
 import static org.apertium.utils.IOUtils.openFile;
 import org.w3c.dom.Document;
@@ -1018,10 +1003,10 @@ public class TransferBytecode {
         il.append(createThis());
         il.append(factory.createNew("org.apertium.transfer.ApertiumRE"));
         il.append(DUP);
-				String regexp = attrItemRegexp(items);
-				// Clumsy hack to allow + as special characters to allow tags like <@+FMAINV>
-				// (<attr-item tags="@\+FMAINV"/> in apertium-sme-sma.sme-sma.t1x)
-				regexp = regexp.replaceAll("\\+", "\\\\\\+"); // escape + to \+
+        String regexp = attrItemRegexp(items);
+		// Clumsy hack to allow + as special characters to allow tags like <@+FMAINV>
+		// (<attr-item tags="@\+FMAINV"/> in apertium-sme-sma.sme-sma.t1x)
+        regexp = regexp.replaceAll("\\+", "\\\\\\+"); // escape + to \+
         il.append(factory.createConstant(regexp));
         il.append(factory.createInvoke("org.apertium.transfer.ApertiumRE", "<init>", VOID, new Type[]{STRING}, INVOKESPECIAL));
         il.append(factory.createPutField(fullClassName, "attr_" + javaIdentifier(n), APERTIUM_RE));
