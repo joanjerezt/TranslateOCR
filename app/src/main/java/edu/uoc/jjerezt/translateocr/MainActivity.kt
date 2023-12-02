@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
+        // https://commons.wikimedia.org/wiki/File:Oxygen480-categories-applications-development-translation.svg
         val screen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
@@ -105,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         val button: Button = findViewById(R.id.button)
         button.setOnClickListener {
             // Do something in response to button click
-            println("Button pressed")
+            print("Button pressed")
             val orig_language : TextView = findViewById(R.id.textView);
             val dest_language : TextView = findViewById(R.id.textView2);
             val text : EditText = findViewById(R.id.editTextTextMultiLine)
@@ -114,7 +115,25 @@ class MainActivity : AppCompatActivity() {
             text2.setText(text_sortida);
         }
 
-
+        /* val download: Button = findViewById(R.id.download)
+        download.setOnClickListener {
+            if(download.text == "Download"){
+                print("Download button pressed")
+                // copy dictionary to cache
+                val content2: TextView = findViewById(R.id.content_dict)
+                download.setText(R.string.copying)
+                if(content2.text.equals("English - Catalan")){
+                    val file = Asset().copyAssetToCache(this, "apertium-en-ca.jar")
+                    try{
+                        Asset().extractJarFile(file)
+                    }
+                    catch(e: Exception){
+                        print(e.localizedMessage)
+                    }
+                }
+                download.setText(R.string.cache)
+            }
+        } */
     }
 
 

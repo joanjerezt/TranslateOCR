@@ -1,13 +1,13 @@
 package edu.uoc.jjerezt.translateocr.ui.dictionary
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent
 
@@ -31,11 +31,6 @@ class DictionaryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_dictionary_list, container, false)
-
-        // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs
-        // val items: ArrayList<String> = ["af-nl", "ca-it", "en-ca", "en-es", "en-gl", "eo-ca"]
-        // val col: Collection<String> =
-        // items.addAll()
 
         // Set the adapter
         if (view is RecyclerView) {

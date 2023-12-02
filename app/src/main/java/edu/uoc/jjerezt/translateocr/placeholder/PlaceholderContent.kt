@@ -21,7 +21,7 @@ object PlaceholderContent {
      */
     val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
 
-    private val COUNT = 25
+    private val COUNT = 24
 
     init {
         // Add some sample items.
@@ -32,17 +32,181 @@ object PlaceholderContent {
 
     private fun addItem(item: PlaceholderItem) {
         ITEMS.add(item)
-        ITEM_MAP.put(item.id, item)
+        ITEM_MAP[item.id] = item
     }
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
-        return PlaceholderItem(position.toString(), "Item " + position, makeDetails(position))
+        // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs
+        when (position) {
+            1 -> {
+                return PlaceholderItem(
+                    id = "af-nl",
+                    content = "Afrikaans - Nederlands",
+                    details = "Dictionary"
+                )
+            }
+            2 -> {
+                return PlaceholderItem(
+                    id = "ca-it",
+                    content = "Catalan - Italian",
+                    details = "Dictionary"
+                )
+            }
+            3 -> {
+                return PlaceholderItem(
+                    id = "en-ca",
+                    content = "English - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            4 -> {
+                    return PlaceholderItem(
+                        id = "en-es",
+                        content = "English - Spanish",
+                        details = "Dictionary"
+                    )
+            }
+            5 -> {
+                return PlaceholderItem(
+                    id = "en-gl",
+                    content = "English - Galician",
+                    details = "Dictionary"
+                )
+            }
+            6 -> {
+                return PlaceholderItem(
+                    id = "eo-ca",
+                    content = "Esperanto - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            7 -> {
+                return PlaceholderItem(
+                    id = "eo-en",
+                    content = "Esperanto - English",
+                    details = "Dictionary"
+                )
+            }
+            8 -> {
+                return PlaceholderItem(
+                    id = "eo-fr",
+                    content = "Esperanto - French",
+                    details = "Dictionary"
+                )
+            }
+            9 -> {
+                return PlaceholderItem(
+                    id = "es-ast",
+                    content = "Spanish - Asturian",
+                    details = "Dictionary"
+                )
+            }
+            10 -> {
+                return PlaceholderItem(
+                    id = "es-ca",
+                    content = "Spanish - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            11 -> {
+                return PlaceholderItem(
+                    id = "es-gl",
+                    content = "Spanish - Galician",
+                    details = "Dictionary"
+                )
+            }
+            12 -> {
+                return PlaceholderItem(
+                    id = "es-pt",
+                    content = "Spanish - Portuguese",
+                    details = "Dictionary"
+                )
+            }
+            13 -> {
+                return PlaceholderItem(
+                    id = "es-ro",
+                    content = "Spanish - Romanian",
+                    details = "Dictionary"
+                )
+            }
+            14 -> {
+                return PlaceholderItem(
+                    id = "eu-en",
+                    content = "Euskera - English",
+                    details = "Dictionary"
+                )
+            }
+            15 -> {
+                return PlaceholderItem(
+                    id = "eu-es",
+                    content = "Euskera - Spanish",
+                    details = "Dictionary"
+                )
+            }
+            16 -> {
+                return PlaceholderItem(
+                    id = "fr-ca",
+                    content = "French - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            17 -> {
+                return PlaceholderItem(
+                    id = "fr-es",
+                    content = "French - Spanish",
+                    details = "Dictionary"
+                )
+            }
+            18 -> {
+                return PlaceholderItem(
+                    id = "ht-en",
+                    content = "Haitian Creole - English",
+                    details = "Dictionary"
+                )
+            }
+            19 -> {
+                return PlaceholderItem(
+                    id = "oc-ca",
+                    content = "Occitan - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            20 -> {
+                return PlaceholderItem(
+                    id = "oc-es",
+                    content = "Occitan - Spanish",
+                    details = "Dictionary"
+                )
+            }
+            21 -> {
+                return PlaceholderItem(
+                    id = "pt-ca",
+                    content = "Portuguese - Catalan",
+                    details = "Dictionary"
+                )
+            }
+            22 -> {
+                return PlaceholderItem(
+                    id = "pt-gl",
+                    content = "Portuguese - Galician",
+                    details = "Dictionary"
+                )
+            }
+            23 -> {
+                return PlaceholderItem(
+                    id = "sv-da",
+                    content = "Swedish - Danish",
+                    details = "Dictionary"
+                )
+            }
+        }
+        return PlaceholderItem(position.toString(), "Item $position", makeDetails(position))
     }
 
     private fun makeDetails(position: Int): String {
         val builder = StringBuilder()
         builder.append("Details about Item: ").append(position)
-        for (i in 0..position - 1) {
+        for (i in 0..<position) {
             builder.append("\nMore details information here.")
         }
         return builder.toString()
