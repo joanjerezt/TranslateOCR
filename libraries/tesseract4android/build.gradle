@@ -51,9 +51,7 @@ android {
 	}
 	flavorDimensions = ["parallelization"]
 	productFlavors {
-		standard {
-		}
-		openmp {
+        openmp {
 			externalNativeBuild {
 				cmake {
 					// NOTE: We must add -static-openmp argument to build it statically,

@@ -94,77 +94,77 @@ object PlaceholderContent {
                     details = "Dictionary"
                 )
             }
-            9 -> {
+            /* 9 -> {
                 return PlaceholderItem(
                     id = "es-ast",
                     content = "Spanish - Asturian",
                     details = "Dictionary"
                 )
-            }
-            10 -> {
+            }*/
+            9 -> {
                 return PlaceholderItem(
                     id = "es-ca",
                     content = "Spanish - Catalan",
                     details = "Dictionary"
                 )
             }
-            11 -> {
+            10 -> {
                 return PlaceholderItem(
                     id = "es-gl",
                     content = "Spanish - Galician",
                     details = "Dictionary"
                 )
             }
-            12 -> {
+            11 -> {
                 return PlaceholderItem(
                     id = "es-pt",
                     content = "Spanish - Portuguese",
                     details = "Dictionary"
                 )
             }
-            13 -> {
+            12 -> {
                 return PlaceholderItem(
                     id = "es-ro",
                     content = "Spanish - Romanian",
                     details = "Dictionary"
                 )
             }
-            14 -> {
+            13 -> {
                 return PlaceholderItem(
                     id = "eu-en",
-                    content = "Euskera - English",
+                    content = "Basque - English",
+                    details = "Dictionary"
+                )
+            }
+            14 -> {
+                return PlaceholderItem(
+                    id = "eu-es",
+                    content = "Basque - Spanish",
                     details = "Dictionary"
                 )
             }
             15 -> {
-                return PlaceholderItem(
-                    id = "eu-es",
-                    content = "Euskera - Spanish",
-                    details = "Dictionary"
-                )
-            }
-            16 -> {
                 return PlaceholderItem(
                     id = "fr-ca",
                     content = "French - Catalan",
                     details = "Dictionary"
                 )
             }
-            17 -> {
+            16 -> {
                 return PlaceholderItem(
                     id = "fr-es",
                     content = "French - Spanish",
                     details = "Dictionary"
                 )
             }
-            18 -> {
+            17 -> {
                 return PlaceholderItem(
                     id = "ht-en",
                     content = "Haitian Creole - English",
                     details = "Dictionary"
                 )
             }
-            19 -> {
+            /* 19 -> {
                 return PlaceholderItem(
                     id = "oc-ca",
                     content = "Occitan - Catalan",
@@ -177,22 +177,22 @@ object PlaceholderContent {
                     content = "Occitan - Spanish",
                     details = "Dictionary"
                 )
-            }
-            21 -> {
+            }*/
+            18 -> {
                 return PlaceholderItem(
                     id = "pt-ca",
                     content = "Portuguese - Catalan",
                     details = "Dictionary"
                 )
             }
-            22 -> {
+            19 -> {
                 return PlaceholderItem(
                     id = "pt-gl",
                     content = "Portuguese - Galician",
                     details = "Dictionary"
                 )
             }
-            23 -> {
+            20 -> {
                 return PlaceholderItem(
                     id = "sv-da",
                     content = "Swedish - Danish",

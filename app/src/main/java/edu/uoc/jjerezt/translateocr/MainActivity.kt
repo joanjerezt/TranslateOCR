@@ -1,4 +1,6 @@
 package edu.uoc.jjerezt.translateocr
+import android.R.attr.path
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -13,17 +15,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.googlecode.tesseract.android.TessBaseAPI
 import dalvik.system.DexClassLoader
 import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
 import edu.uoc.jjerezt.translateocr.runtime.Asset
 import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.util.jar.JarFile
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -104,37 +102,44 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         val button: Button = findViewById(R.id.button)
+        var text : EditText = findViewById(R.id.editTextTextMultiLine)
         button.setOnClickListener {
             // Do something in response to button click
             print("Button pressed")
             val orig_language : TextView = findViewById(R.id.textView);
             val dest_language : TextView = findViewById(R.id.textView2);
-            val text : EditText = findViewById(R.id.editTextTextMultiLine)
+            text = findViewById(R.id.editTextTextMultiLine)
             val text_sortida = translate(orig_language.text.toString(), dest_language.text.toString(), text.text.toString())
             val text2: EditText = findViewById(R.id.editTextTextMultiLine2)
             text2.setText(text_sortida);
         }
-
-        /* val download: Button = findViewById(R.id.download)
-        download.setOnClickListener {
-            if(download.text == "Download"){
-                print("Download button pressed")
-                // copy dictionary to cache
-                val content2: TextView = findViewById(R.id.content_dict)
-                download.setText(R.string.copying)
-                if(content2.text.equals("English - Catalan")){
-                    val file = Asset().copyAssetToCache(this, "apertium-en-ca.jar")
-                    try{
-                        Asset().extractJarFile(file)
-                    }
-                    catch(e: Exception){
-                        print(e.localizedMessage)
-                    }
-                }
-                download.setText(R.string.cache)
+        // https://developer.android.com/training/data-storage/app-specific#kotlin
+        // https://stackoverflow.com/questions/11324348/why-app-appears-while-creating-directory-using-contextwraper-getdir
+        val tess = TessBaseAPI()
+        val img: Button = findViewById(R.id.button2)
+        img.setOnClickListener {
+            val imgTest = Asset().copyAssetToCache(this, "hello_world.png")
+            val dir = this.getDir("tesseract", Context.MODE_PRIVATE)
+            val createDir = File("$dir/tessdata")
+            if (!createDir.exists()) {
+                createDir.mkdir()
             }
-        } */
+            val trained = Asset().copyAssetToStorage(this, createDir,"eng.traineddata")
+            println(trained.absolutePath)
+            val dataPath: String = File(this.filesDir.parent, "app_tesseract").absolutePath
+            println(dataPath)
+            if (!tess.init(dataPath, "eng")){
+                tess.recycle()
+                return@setOnClickListener;
+            }
+            tess.setImage(imgTest);
+            val text2 = tess.utF8Text
+            println(text2)
+            text.setText(text2)
+        }
     }
+
+
 
 
     private fun translate(origLanguage: String, destLanguage: String, text: String): String {

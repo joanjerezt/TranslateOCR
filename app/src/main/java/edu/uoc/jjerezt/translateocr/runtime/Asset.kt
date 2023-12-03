@@ -21,6 +21,17 @@ class Asset {
             }
         }
 
+    fun copyAssetToStorage(context: Context, dir: File, fileName: String): File = File(dir.absolutePath, fileName)
+        .also {
+            if (!it.exists()) {
+                it.outputStream().use { storage ->
+                    context.assets.open("tessdata/$fileName").use { inputStream ->
+                        inputStream.copyTo(storage)
+                    }
+                }
+            }
+        }
+
     // https://stackoverflow.com/a/13084442
     fun extractJarFile(jar: File){
         val jarfile = JarFile(jar)
