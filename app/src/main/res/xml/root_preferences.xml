@@ -4,6 +4,7 @@
     <PreferenceCategory app:title="@string/languages_header">
 
         <ListPreference
+            app:key="dictionaries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="1"
@@ -11,6 +12,9 @@
         <CheckBoxPreference
             app:key="words"
             app:title="@string/unknown_title" />
+        <CheckBoxPreference
+            app:key="ambiguity"
+            app:title="Display ambiguous words"/>
 
     </PreferenceCategory>
 
@@ -18,11 +22,13 @@
 
 
         <ListPreference
+            app:key = "license"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="1"
             android:title="License" />
         <ListPreference
+            app:key = "about"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:defaultValue="1"

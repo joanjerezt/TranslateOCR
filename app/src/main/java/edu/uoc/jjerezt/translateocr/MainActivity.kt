@@ -1,5 +1,4 @@
 package edu.uoc.jjerezt.translateocr
-import android.R.attr.path
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils

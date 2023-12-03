@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(project(mapOf("path" to ":libraries:lttoolbox-java")))
     implementation(project(mapOf("path" to ":libraries:tesseract4android")))
     testImplementation("junit:junit:4.13.2")
