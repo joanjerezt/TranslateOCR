@@ -26,7 +26,7 @@ import java.util.regex.Pattern
 
 
 /*
-* 2023-2024 Joan Jerez Torres
+* (c) 2023-2024 Joan Jerez Torres
 * GPL 3.0
 * */
 
@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val unknownPattern = Pattern.compile("\\B\\*((\\p{L}||\\p{N})+)\\b")
 
+    /*** Mitzuli ***/
     private fun escape(s: String?, htmlOutput: Boolean): String? {
         return if (htmlOutput) TextUtils.htmlEncode(s).replace("\n".toRegex(), "<br/>") else s
     }
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         if (htmlOutput) sb.append("</html>")
         return sb.toString()
     }
+    /***/
 
     private lateinit var binding: ActivityMainBinding
 

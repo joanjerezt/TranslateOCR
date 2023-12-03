@@ -3,35 +3,32 @@
 
     <PreferenceCategory app:title="@string/languages_header">
 
-        <ListPreference
+        <Preference
             app:key="dictionaries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="1"
             android:title="Dictionaries" />
         <CheckBoxPreference
             app:key="words"
+            app:defaultValue="false"
             app:title="@string/unknown_title" />
         <CheckBoxPreference
             app:key="ambiguity"
+            app:defaultValue="false"
             app:title="Display ambiguous words"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/help_header">
-
-
-        <ListPreference
+        <Preference
             app:key = "license"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="1"
             android:title="License" />
-        <ListPreference
+        <Preference
             app:key = "about"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="1"
             android:title="About" />
     </PreferenceCategory>
 
