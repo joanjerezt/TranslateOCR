@@ -5,7 +5,35 @@
     <string name="title_favorites">Favorites</string>
     <string name="title_dictionaries">Dictionaries</string>
     <string name="textview">English</string>
-    <string name="textview2">Català</string>
+    <string-array name="orig_languages_array">
+        <item>Afrikaans</item>
+        <item>Catalan</item>
+        <item>English</item>
+        <item>Esperanto</item>
+        <item>French</item>
+        <item>Galician</item>
+        <item>Haitian</item>
+        <item>Italian</item>
+        <item>Nederlands</item>
+        <item>Portuguese</item>
+        <item>Romanian</item>
+        <item>Spanish</item>
+        <item>Swedish</item>
+    </string-array>
+    <string-array name="dest_languages_array">
+        <item>Afrikaans</item>
+        <item>Catalan</item>
+        <item>Danish</item>
+        <item>English</item>
+        <item>Esperanto</item>
+        <item>French</item>
+        <item>Galician</item>
+        <item>Italian</item>
+        <item>Nederlands</item>
+        <item>Portuguese</item>
+        <item>Spanish</item>
+    </string-array>
+    <string name="textview2">Catalan</string>
     <string name="title_settings">Settings</string>
     <!-- Preference Titles -->
     <string name="languages_header">Languages</string>

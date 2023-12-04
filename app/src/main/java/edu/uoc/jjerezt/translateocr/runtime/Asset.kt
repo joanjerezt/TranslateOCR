@@ -14,7 +14,7 @@ class Asset {
         .also {
             if (!it.exists()) {
                 it.outputStream().use { cache ->
-                    context.assets.open(fileName).use { inputStream ->
+                    context.assets.open("apertium/$fileName").use { inputStream ->
                         inputStream.copyTo(cache)
                     }
                 }
@@ -33,12 +33,13 @@ class Asset {
         }
 
     // https://stackoverflow.com/a/13084442
-    fun extractJarFile(jar: File){
+    fun extractJarFile(jar: File, destdir: File){
         val jarfile = JarFile(jar)
-
         val enu = jarfile.entries()
         while (enu.hasMoreElements()) {
-            val destdir = jar.parentFile //abc is my destination directory
+            // val destdir = subdir //abc is my destination directory
+            destdir.mkdir()
+            println(destdir)
             val je = enu.nextElement()
             println(je.name)
             if(je.name != "data/apertium-en-ca.en-ca.genitive.t1x"){

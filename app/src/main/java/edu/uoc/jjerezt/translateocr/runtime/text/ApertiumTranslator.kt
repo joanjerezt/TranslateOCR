@@ -13,25 +13,9 @@ class ApertiumTranslator(
 
         // https://wiki.apertium.org/wiki/User:Mikel/Embeddable_lttoolbox-java:_Progress
 
-        /* synchronized(org.apertium.Translator::class.java) {
-            org.apertium.Translator.setDisplayMarks(true)
-            org.apertium.Translator.setBase(base.absolutePath)
-            print("Modes: \n")
-            for(item in org.apertium.Translator.getAvailableModes()) {
-                print( item + "\n")
-            }
-            org.apertium.Translator.setMode(code)
-            org.apertium.utils.IOUtils.cacheDir = cacheDir
-            return org.apertium.Translator.translate(text)
-        } */
-
         synchronized(org.apertium.Translator::class.java) {
             org.apertium.Translator.setDisplayMarks(true)
             org.apertium.Translator.setBase(base.absolutePath, classLoader)
-            print("Modes: \n")
-            for(item in org.apertium.Translator.getAvailableModes()) {
-                print( item + "\n")
-            }
             org.apertium.Translator.setMode(code)
             org.apertium.utils.IOUtils.cacheDir = cacheDir
             return org.apertium.Translator.translate(text)

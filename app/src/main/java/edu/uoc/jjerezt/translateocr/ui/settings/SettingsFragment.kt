@@ -109,7 +109,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val license : Preference? = findPreference("license") as Preference?
         license!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val mySnackbar = view?.let { it1 -> Snackbar.make(it1, "General Public License 3.0 (GPL 3.0)", 5000) }
+            val mySnackbar = view?.let { it1 -> Snackbar.make(it1, "General Public License 3 (GPL 3)", 5000) }
             mySnackbar?.show()
             true
         }
@@ -125,7 +125,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         // https://stackoverflow.com/questions/21028786/how-do-i-open-a-new-fragment-from-another-fragment
-        val dictionaries: Preference? = findPreference("dictionaries") as Preference?
+        /* val dictionaries: Preference? = findPreference("dictionaries") as Preference?
         dictionaries!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             try {
                 view?.let { Navigation.findNavController(it).navigate(R.id.action_go) };
@@ -134,6 +134,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 println(e.localizedMessage)
             }
             true
-        }
+        } */
     }
 }

@@ -3,11 +3,11 @@
 
     <PreferenceCategory app:title="@string/languages_header">
 
-        <Preference
+        <!-- <Preference
             app:key="dictionaries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:title="Dictionaries" />
+            android:title="Dictionaries" /> -->
         <CheckBoxPreference
             app:key="words"
             app:defaultValue="false"
