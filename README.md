@@ -33,7 +33,7 @@ This project includes third party libraries; please see libraries/ for copyright
 
 * 6 de desembre: Implementació final de la gestió de la configuració. Funcionalitats extra demanades pel usuaris.
 
-* 7 de desembre: Depuració de les errades de programació del projecte. Proves unitàries.
+* 7 de desembre: Depuració de les errades de programació del projecte. Proves de instrumentació.
 
 * 8 de desembre: Redacció de la memòria del projecte
 
