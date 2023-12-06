@@ -10,11 +10,23 @@ class Asset {
 
     // https://stackoverflow.com/a/56455963
     @Throws(IOException::class)
-    fun copyAssetToCache(context: Context, fileName: String): File = File(context.cacheDir, fileName)
+    fun copyDictionaryToCache(context: Context, fileName: String): File = File(context.cacheDir, fileName)
         .also {
             if (!it.exists()) {
                 it.outputStream().use { cache ->
                     context.assets.open("apertium/$fileName").use { inputStream ->
+                        inputStream.copyTo(cache)
+                    }
+                }
+            }
+        }
+
+    @Throws(IOException::class)
+    fun copyAssetToCache(context: Context, fileName: String): File = File(context.cacheDir, fileName)
+        .also {
+            if (!it.exists()) {
+                it.outputStream().use { cache ->
+                    context.assets.open(fileName).use { inputStream ->
                         inputStream.copyTo(cache)
                     }
                 }

@@ -1,13 +1,8 @@
 package edu.uoc.jjerezt.translateocr
 
-import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.findNavController
@@ -15,12 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.googlecode.tesseract.android.TessBaseAPI
 import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
-import edu.uoc.jjerezt.translateocr.runtime.Asset
-import java.io.File
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 
 /*
@@ -73,32 +63,5 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        val origText : EditText = findViewById(R.id.editTextTextMultiLine)
-
-        // https://developer.android.com/training/data-storage/app-specific#kotlin
-        // https://stackoverflow.com/questions/11324348/why-app-appears-while-creating-directory-using-contextwraper-getdir
-        val tess = TessBaseAPI()
-        val img: Button = findViewById(R.id.button2)
-        img.setOnClickListener {
-            val imgTest = Asset().copyAssetToCache(this, "hello_world.png")
-            val dir = this.getDir("tesseract", Context.MODE_PRIVATE)
-            val createDir = File("$dir/tessdata")
-            if (!createDir.exists()) {
-                createDir.mkdir()
-            }
-            val trained = Asset().copyAssetToStorage(this, createDir,"eng.traineddata")
-            println(trained.absolutePath)
-            val dataPath: String = File(this.filesDir.parent, "app_tesseract").absolutePath
-            println(dataPath)
-            if (!tess.init(dataPath, "eng")){
-                tess.recycle()
-                return@setOnClickListener;
-            }
-            tess.setImage(imgTest);
-            val text2 = tess.utF8Text
-            println(text2)
-            origText.setText(text2)
-        }
     }
 }

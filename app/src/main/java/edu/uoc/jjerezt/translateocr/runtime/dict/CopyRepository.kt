@@ -34,7 +34,7 @@ class CopyRepository {
 
 
         private fun copyDictionary(code: String, holder: RecyclerView.ViewHolder){
-                val file = Asset().copyAssetToCache(holder.itemView.context, "apertium-$code.jar")
+                val file = Asset().copyDictionaryToCache(holder.itemView.context, "apertium-$code.jar")
                 val subdir = File(file.parentFile?.absolutePath, code)
                 try{
                         Asset().extractJarFile(file, subdir)

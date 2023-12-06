@@ -4,6 +4,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import android.widget.TextView
+import java.util.Collections
 
 
 class Language {
@@ -51,6 +52,74 @@ class Language {
         } else {
             "un-un"
         }
+    }
+
+    fun getLocale(origLanguage: String): ArrayList<String> {
+        var lang = "en"
+        var country = "GB"
+        when (origLanguage) {
+            "English" -> {
+                lang = "en"
+                country = "GB"
+            }
+            "Spanish" -> {
+                lang = "es"
+                country = "ES"
+            }
+            "Esperanto" -> {
+                lang = "eo"
+                country = "PL"
+            }
+            "Catalan" -> {
+                lang = "ca"
+                country = "ES"
+            }
+            "Basque" -> {
+                lang = "eu"
+                country = "ES"
+            }
+            "French" -> {
+                lang = "fr"
+                country = "FR"
+            }
+            "Afrikaans" -> {
+                lang = "af"
+                country = "ZA"
+            }
+            "Nederlands" -> {
+                lang = "nl"
+                country = "NL"
+            }
+            "Romanian" -> {
+                lang = "ro"
+                country = "RO"
+            }
+            "Italian" -> {
+                lang = "it"
+                country = "IT"
+            }
+            "Galician" -> {
+                lang = "gl"
+                country = "ES"
+            }
+            "Portuguese" -> {
+                lang = "pt"
+                country = "PT"
+            }
+            "Swedish" -> {
+                lang = "sv"
+                country = "SE"
+            }
+            "Haitian" -> {
+                lang = "ht"
+                country = "HT"
+            }
+        }
+
+        val result = ArrayList<String>()
+        result.add(lang)
+        result.add(country)
+        return result
     }
 
     fun getModeCode(origLanguage: String, destLanguage: String): String {

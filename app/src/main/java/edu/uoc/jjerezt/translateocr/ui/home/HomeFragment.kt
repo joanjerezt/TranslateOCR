@@ -1,6 +1,12 @@
 package edu.uoc.jjerezt.translateocr.ui.home
+
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.os.LocaleList
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,18 +16,26 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.googlecode.tesseract.android.TessBaseAPI
 import dalvik.system.DexClassLoader
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentHomeBinding
+import edu.uoc.jjerezt.translateocr.runtime.Asset
 import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
 import edu.uoc.jjerezt.translateocr.runtime.dict.Language
+import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
 import java.io.File
+import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
@@ -30,6 +44,26 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    // https://developer.android.com/training/basics/intents/result
+    private lateinit var mediaFile : String
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        // Callback is invoked after the user selects a media item or closes the
+        // photo picker.
+        if (uri != null) {
+            Log.d("PhotoPicker", "Selected URI: $uri")
+            mediaFile = uri.path!!
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
+
+    private var cameraResultLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicture()) { success ->
+        if(success){
+
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +81,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val destText: TextView = root.findViewById(R.id.editTextTextMultiLine2)
 
         origLanguage = root.findViewById(R.id.spinner);
+        // https://developer.android.com/develop/ui/views/components/spinner
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter.createFromResource(
             root.context,
@@ -60,8 +95,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         origLanguage.onItemSelectedListener = this
-        // val destLanguage : TextView = root.findViewById(R.id.textView2);
         destLanguage = root.findViewById(R.id.spinner2)
+        // https://stackoverflow.com/questions/14569296/setting-the-value-of-the-spinner-dynamically
         // Create an ArrayAdapter using the string array and a default spinner layout.
         val dataAdapter = ArrayAdapter<String>(root.context, android.R.layout.simple_spinner_dropdown_item)
         val itemNames: Array<String> = root.context.resources.getStringArray(R.array.dest_languages_array)
@@ -69,7 +104,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         // https://stackoverflow.com/questions/71157667/how-to-change-default-input-language-in-textinputedittext-java-android
         // https://stackoverflow.com/questions/56387603/how-we-can-specify-input-language-for-specific-edittextnot-for-whole-app-any-h
-        // origText.imeHintLocales = LocaleList(Locale("ar", "SA"))
+        val locale = Language().getLocale(origLanguage.selectedItem.toString())
+        origText.imeHintLocales = LocaleList(Locale(locale[0], locale[1]))
 
         translateButton.setOnClickListener {
             println("Translate button pressed")
@@ -77,6 +113,24 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
             destText.text = spanned;
+        }
+
+        val img: Button = root.findViewById(R.id.image)
+        img.setOnClickListener {
+            val imgTest = getImage(root.context)
+            val language = Training().getCode(origLanguage.selectedItem.toString())
+            val dataPath = Training().copyLanguage(language, root.context)
+            val result = recognize(imgTest, dataPath, language)
+            origText.setText(result)
+        }
+
+        val camera: Button = root.findViewById(R.id.camera)
+        camera.setOnClickListener {
+            val picture = takeImage(root.context)
+            val language = Training().getCode(origLanguage.selectedItem.toString())
+            val dataPath = Training().copyLanguage(language, root.context)
+            val result = recognize(picture, dataPath, language)
+            origText.setText(result)
         }
 
         return root
@@ -88,6 +142,43 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getImage(context: Context): File {
+        mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        pickMedia.launch(PickVisualMediaRequest())
+        return File(mediaFile)
+    }
+
+    private fun takeImage(context: Context): File {
+        mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
+        // Attempt to allocate a file to store the photo
+        val newFile = File(context.cacheDir, "snap.jpg")
+        val photoUri = FileProvider.getUriForFile(
+            context,
+            context.packageName + ".provider",
+            newFile
+        )
+        try {
+            cameraResultLauncher.launch(photoUri);
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+        mediaFile = newFile.absolutePath
+        return File(mediaFile)
+    }
+
+    private fun recognize(imgTest: File, dataPath: String, language: String
+    ): String {
+        val tess = TessBaseAPI()
+        if (!tess.init(dataPath, language)){
+            tess.recycle()
+        }
+        tess.setImage(imgTest);
+        val text2 = tess.utF8Text
+        tess.recycle()
+        return text2
     }
 
     private fun translate(
@@ -133,9 +224,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         )
 
         val internalCacheDir = File(File(view.context.cacheDir, "packages"), "cache")
-        var htmlResult = "<span></span>"
 
-        htmlResult = format(
+        val htmlResult: String = format(
             ApertiumTranslator(
                 offline.code,
                 offline.dir,
