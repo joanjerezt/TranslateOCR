@@ -2,12 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/languages_header">
-
-        <!-- <Preference
-            app:key="dictionaries"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:title="Dictionaries" /> -->
         <CheckBoxPreference
             app:key="words"
             app:defaultValue="false"
@@ -16,7 +10,6 @@
             app:key="ambiguity"
             app:defaultValue="false"
             app:title="Display ambiguous words"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/help_header">

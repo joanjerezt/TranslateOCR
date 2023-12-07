@@ -4,17 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentDictionaryBinding
 import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent.PlaceholderItem
+import edu.uoc.jjerezt.translateocr.runtime.DataStoreManager
 import edu.uoc.jjerezt.translateocr.runtime.dict.CopyRepository
 import edu.uoc.jjerezt.translateocr.runtime.dict.CopyViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import edu.uoc.jjerezt.translateocr.runtime.dict.Language
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
@@ -36,34 +37,38 @@ class MyDictionaryRecyclerViewAdapter(
 
     }
 
-
-
-    private fun checkCopiedDictionaries(){
-        TODO()
-    }
-
-    // https://stackoverflow.com/questions/55208748/asynctask-as-kotlin-coroutine
-    private fun <R> CoroutineScope.executeAsyncTask(
-        onPreExecute: () -> Unit,
-        doInBackground: () -> R,
-        onPostExecute: (R) -> Unit
-    ) = launch {
-        onPreExecute()
-        val result = withContext(Dispatchers.IO) { // runs in background thread without blocking the Main Thread
-            doInBackground()
-        }
-        onPostExecute(result)
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
         // holder.idView.text = item.id
         holder.contentView.text = item.content
         val download = holder.downloadButton
         val context = holder.itemView.context
-        val color = context.resources.getColor(R.color.green, context.theme)
+        val defaultColor = context.resources.getColor(R.color.green, context.theme)
         val orange = context.resources.getColor(R.color.orange, context.theme)
-        download.setBackgroundColor(color)
+        val red = context.resources.getColor(R.color.red, context.theme)
+        var status = 0
+        val code = Language().getCode(holder.contentView)
+        DataStoreManager.dict[code] = intPreferencesKey("dict_${code}")
+        runBlocking {
+            withTimeoutOrNull(2000) {
+                status = DataStoreManager().readValue( holder.itemView.context, DataStoreManager.dict[code]!!
+                ) ?: 0
+            }
+        }
+        when (status) {
+            1 -> {
+                download.text = "Copying"
+                download.setBackgroundColor(orange)
+            }
+            0 -> {
+                download.text = "Available"
+                download.setBackgroundColor(defaultColor)
+            }
+            2 -> {
+                download.text = "Delete"
+                download.setBackgroundColor(red)
+            }
+        }
         download.setOnClickListener {
             when (download.text) {
                 "Copying" -> {
@@ -81,7 +86,6 @@ class MyDictionaryRecyclerViewAdapter(
                     println("Download button pressed")
                     // copy dictionary to cache
                     val dictionary: TextView = holder.contentView
-                    println(dictionary.text)
                     download.setText(R.string.copying)
                     download.setBackgroundColor(orange)
                     CopyViewModel(copyRepository = CopyRepository()).copy(dictionary, holder, download)

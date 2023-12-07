@@ -2,7 +2,6 @@ package edu.uoc.jjerezt.translateocr.ui.home
 
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.os.LocaleList
 import android.text.TextUtils
@@ -22,15 +21,22 @@ import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.googlecode.tesseract.android.TessBaseAPI
+import androidx.lifecycle.lifecycleScope
 import dalvik.system.DexClassLoader
+import edu.uoc.jjerezt.translateocr.MainActivity
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentHomeBinding
 import edu.uoc.jjerezt.translateocr.runtime.Asset
+import edu.uoc.jjerezt.translateocr.runtime.DataStoreManager
 import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
 import edu.uoc.jjerezt.translateocr.runtime.dict.Language
+import edu.uoc.jjerezt.translateocr.runtime.ocr.TesseractRecognition
 import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import java.util.Locale
 import java.util.regex.Matcher
@@ -61,7 +67,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var cameraResultLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()) { success ->
         if(success){
-
+            println(success)
         }
     }
 
@@ -120,7 +126,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val imgTest = getImage(root.context)
             val language = Training().getCode(origLanguage.selectedItem.toString())
             val dataPath = Training().copyLanguage(language, root.context)
-            val result = recognize(imgTest, dataPath, language)
+            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
             origText.setText(result)
         }
 
@@ -129,7 +135,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val picture = takeImage(root.context)
             val language = Training().getCode(origLanguage.selectedItem.toString())
             val dataPath = Training().copyLanguage(language, root.context)
-            val result = recognize(picture, dataPath, language)
+            val result = TesseractRecognition().recognize(picture, dataPath, language)
             origText.setText(result)
         }
 
@@ -151,6 +157,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         return File(mediaFile)
     }
 
+    // https://developer.android.com/training/camera/camera-intents
+    // https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
+    // https://stackoverflow.com/questions/61941959/activityresultcontracts-takepicture
+    // https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
+    // https://stackoverflow.com/questions/42516126/fileprovider-illegalargumentexception-failed-to-find-configured-root
+    // https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
     private fun takeImage(context: Context): File {
         mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
         // Attempt to allocate a file to store the photo
@@ -169,27 +181,36 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         return File(mediaFile)
     }
 
-    private fun recognize(imgTest: File, dataPath: String, language: String
-    ): String {
-        val tess = TessBaseAPI()
-        if (!tess.init(dataPath, language)){
-            tess.recycle()
-        }
-        tess.setImage(imgTest);
-        val text2 = tess.utF8Text
-        tess.recycle()
-        return text2
-    }
-
     private fun translate(
         view: View,
         origLanguage: String,
         destLanguage: String,
         text: String
     ): String {
+        var markUnknown = false
+        var markAmbiguity = false
 
-        val markUnknown = true
-        val markAmbiguity = true
+        runBlocking {
+            withTimeoutOrNull(2000) {
+                markUnknown = DataStoreManager().readValue(
+                    view.context,
+                    DataStoreManager.markUnknown
+                ) ?: false
+            }
+        }
+
+        runBlocking {
+            withTimeoutOrNull(2000) {
+                markAmbiguity = DataStoreManager().readValue(
+                    view.context,
+                    DataStoreManager.markAmbiguity
+                ) ?: false
+            }
+        }
+
+        println("Unknown: $markUnknown")
+        println("Ambiguity: $markAmbiguity")
+
 
         val code = Language().getDictionaryCode(origLanguage, destLanguage)
         val mode = Language().getModeCode(origLanguage, destLanguage)
@@ -225,25 +246,24 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         val internalCacheDir = File(File(view.context.cacheDir, "packages"), "cache")
 
-        val htmlResult: String = format(
-            ApertiumTranslator(
-                offline.code,
-                offline.dir,
-                internalCacheDir,
-                classLoader
-            ).translate(text), markUnknown
-        )
+        val txtResult = ApertiumTranslator(
+            offline.code,
+            offline.dir,
+            internalCacheDir,
+            classLoader
+        ).translate(text, markUnknown, markAmbiguity)
+        val htmlResult: String = format(txtResult, markUnknown)
 
         println(htmlResult)
         return htmlResult
     }
 
-    /*** Mitzuli                          ***
-     *** (c) 2014 - 2016 Mikel Artetxe    ***/
+    /*** Mitzuli (c) 2014 - 2016 Mikel Artetxe ***
+     *** (c) 2023 - 2024 Joan Jerez            ***/
 
     private val unknownPattern = Pattern.compile("\\B\\*((\\p{L}||\\p{N})+)\\b")
-    private fun escape(s: String?, htmlOutput: Boolean): String? {
-        return if (htmlOutput) TextUtils.htmlEncode(s).replace("\n".toRegex(), "<br/>") else s
+    private fun escape(s: String?): String {
+        return TextUtils.htmlEncode(s).replace("\n".toRegex(), "<br/>")
     }
 
     private fun format(s: String, markUnknown: Boolean): String {
@@ -254,13 +274,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         if (htmlOutput) sb.append("<html>")
         var prevEnd = 0
         while (matcher.find()) {
-            sb.append(escape(s.substring(prevEnd, matcher.start()), htmlOutput))
+            if (htmlOutput) sb.append(escape(s.substring(prevEnd, matcher.start()))) else sb.append(s.substring(prevEnd, matcher.start()))
             if (markUnknown) sb.append(if (htmlOutput) "<font color='#EE0000'>" else "*")
-            sb.append(escape(matcher.group(1),htmlOutput))
+            if (htmlOutput) sb.append(escape(matcher.group(1))) else sb.append(matcher.group(1))
             if (markUnknown && htmlOutput) sb.append("</font>")
             prevEnd = matcher.end()
         }
-        sb.append(escape(s.substring(prevEnd), htmlOutput))
+        if (htmlOutput) sb.append(escape(s.substring(prevEnd))) else sb.append(s.substring(prevEnd))
         if (htmlOutput) sb.append("</html>")
         return sb.toString()
     }
