@@ -80,7 +80,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val root: View = binding.root
 
         val translateButton: Button = root.findViewById(R.id.button)
-        val origText : EditText = root.findViewById(R.id.editTextTextMultiLine)
+        origText = root.findViewById(R.id.editTextTextMultiLine)
         val destText: TextView = root.findViewById(R.id.editTextTextMultiLine2)
 
         origLanguage = root.findViewById(R.id.spinner);
@@ -145,6 +145,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private lateinit var destLanguage: Spinner
     private lateinit var origLanguage: Spinner
+    private lateinit var origText: EditText
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -291,6 +292,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val item = parent?.getItemAtPosition(position)
         println("Origin Language: $item")
+        val locale = Language().getLocale(origLanguage.selectedItem.toString())
+        origText.imeHintLocales = LocaleList(Locale(locale[0], locale[1]))
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.restartInput(origText)
         val context = requireView().context
         // Create an ArrayAdapter using the string array and a default spinner layout.
         val dataAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item)
