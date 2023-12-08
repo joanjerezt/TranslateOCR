@@ -9,7 +9,7 @@ class Language {
 
     // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs
     fun getDictionaryCode(origLanguage: String, destLanguage: String): String {
-        return if ((origLanguage == "Afrikaans" && destLanguage == "Nederlands") || (destLanguage == "Afrikaans" && origLanguage == "Nederlands")) {
+        return if ((origLanguage == "Afrikaans" && destLanguage == "Dutch") || (destLanguage == "Afrikaans" && origLanguage == "Dutch")) {
             "af-nl"
         } else if ((origLanguage == "Catalan" && destLanguage == "Italian") || (destLanguage == "Catalan" && origLanguage == "Italian")) {
             "ca-it"
@@ -84,7 +84,7 @@ class Language {
                 lang = "af"
                 country = "ZA"
             }
-            "Nederlands" -> {
+            "Dutch" -> {
                 lang = "nl"
                 country = "NL"
             }
@@ -124,7 +124,7 @@ class Language {
         when (origLanguage) {
             "Afrikaans" -> {
                 when (destLanguage) {
-                    "Nederlands" -> {
+                    "Dutch" -> {
                         return "af-nl"
                     }
                 }
@@ -214,7 +214,7 @@ class Language {
                 }
             }
 
-            "Nederlands" -> {
+            "Dutch" -> {
                 when (destLanguage) {
                     "Afrikaans" -> {
                         return "nl-af"
@@ -401,7 +401,7 @@ class Language {
                     if (i == 1) dataAdapter.add(itemNames[i])
                 }
             }
-            "Nederlands" -> {
+            "Dutch" -> {
                 for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
                 {
                     if (i == 0) dataAdapter.add(itemNames[i])

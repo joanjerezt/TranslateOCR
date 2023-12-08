@@ -41,7 +41,7 @@ object PlaceholderContent {
             1 -> {
                 return PlaceholderItem(
                     id = "af-nl",
-                    content = "Afrikaans - Nederlands",
+                    content = "Afrikaans - Dutch",
                     details = "Dictionary"
                 )
             }
