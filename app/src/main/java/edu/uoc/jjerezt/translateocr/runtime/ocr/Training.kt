@@ -8,13 +8,25 @@ class Training {
 
     fun getCode(language: String): String {
         return when (language) {
+            "Catalan" -> {
+                "cat"
+            }
             "English" -> {
                 "eng"
             }
-            "Afrikaans" -> {
-                "afr"
+            "French" -> {
+                "fra"
             }
-            else -> "unk"
+            "Galician" -> {
+                "glg"
+            }
+            "Portuguese" -> {
+                "por"
+            }
+            "Spanish" -> {
+                "spa"
+            }
+            else -> "eng"
         }
     }
 

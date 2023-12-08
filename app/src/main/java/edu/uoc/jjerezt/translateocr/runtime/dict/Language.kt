@@ -1,10 +1,8 @@
 package edu.uoc.jjerezt.translateocr.runtime.dict
 
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.SpinnerAdapter
 import android.widget.TextView
-import java.util.Collections
 
 
 class Language {
@@ -352,85 +350,86 @@ class Language {
     fun getAdapterBasedOnOrig(
         dataAdapter: ArrayAdapter<String>,
         itemNames: Array<String>,
-        origLanguage: Spinner
+        origLanguage: String
     ): SpinnerAdapter {
-        val origStr = origLanguage.selectedItem.toString()
-        if (origStr == "Afrikaans"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 8) dataAdapter.add(itemNames[i])
+        when (origLanguage) {
+            "Afrikaans" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 8) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Catalan"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(!(i == 0 || i == 1 || i == 2 || i == 6 || i == 8)) dataAdapter.add(itemNames[i])
+            "Catalan" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (!(i == 0 || i == 1 || i == 2 || i == 6 || i == 8)) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "English"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 1 || i == 4 || i == 5 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
+            "English" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 1 || i == 4 || i == 5 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Esperanto"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 3) dataAdapter.add(itemNames[i])
+            "Esperanto" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 3) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "French"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 1 || i == 4 || i == 10) dataAdapter.add(itemNames[i])
+            "French" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 1 || i == 4 || i == 10) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Galician"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 3 || i == 9 || i == 10) dataAdapter.add(itemNames[i])
+            "Galician" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 3 || i == 9 || i == 10) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Haitian"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 4) dataAdapter.add(itemNames[i])
+            "Haitian" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 4) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Italian"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 1) dataAdapter.add(itemNames[i])
+            "Italian" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 1) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Nederlands"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 0) dataAdapter.add(itemNames[i])
+            "Nederlands" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 0) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Portuguese"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 1 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
+            "Portuguese" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 1 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Romanian"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 10) dataAdapter.add(itemNames[i])
+            "Romanian" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 10) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Spanish"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(!(i == 0 || i == 2 || i == 7 || i == 8 || i == 10)) dataAdapter.add(itemNames[i])
+            "Spanish" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (!(i == 0 || i == 2 || i == 7 || i == 8 || i == 10)) dataAdapter.add(itemNames[i])
+                }
             }
-        }
-        if (origStr == "Swedish"){
-            for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
-            {
-                if(i == 2) dataAdapter.add(itemNames[i])
+            "Swedish" -> {
+                for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
+                {
+                    if (i == 2) dataAdapter.add(itemNames[i])
+                }
             }
         }
 

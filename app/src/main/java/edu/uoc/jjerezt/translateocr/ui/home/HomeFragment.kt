@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -21,9 +22,7 @@ import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import dalvik.system.DexClassLoader
-import edu.uoc.jjerezt.translateocr.MainActivity
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentHomeBinding
 import edu.uoc.jjerezt.translateocr.runtime.Asset
@@ -33,8 +32,6 @@ import edu.uoc.jjerezt.translateocr.runtime.dict.Language
 import edu.uoc.jjerezt.translateocr.runtime.ocr.TesseractRecognition
 import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
@@ -106,12 +103,16 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Create an ArrayAdapter using the string array and a default spinner layout.
         val dataAdapter = ArrayAdapter<String>(root.context, android.R.layout.simple_spinner_dropdown_item)
         val itemNames: Array<String> = root.context.resources.getStringArray(R.array.dest_languages_array)
-        destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage)
+        destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage.selectedItem.toString())
 
         // https://stackoverflow.com/questions/71157667/how-to-change-default-input-language-in-textinputedittext-java-android
         // https://stackoverflow.com/questions/56387603/how-we-can-specify-input-language-for-specific-edittextnot-for-whole-app-any-h
+        // https://stackoverflow.com/questions/5715072/change-android-keyboard-language
+        // https://developer.android.com/reference/android/widget/TextView#setImeHintLocales(android.os.LocaleList)
         val locale = Language().getLocale(origLanguage.selectedItem.toString())
         origText.imeHintLocales = LocaleList(Locale(locale[0], locale[1]))
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.restartInput(origText)
 
         translateButton.setOnClickListener {
             println("Translate button pressed")
@@ -294,7 +295,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Create an ArrayAdapter using the string array and a default spinner layout.
         val dataAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item)
         val itemNames: Array<String> = context.resources.getStringArray(R.array.dest_languages_array)
-        destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage)
+        destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage.selectedItem.toString())
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
