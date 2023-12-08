@@ -1,15 +1,18 @@
 package edu.uoc.jjerezt.translateocr.runtime
 
 import android.content.Context
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.jar.JarFile
 
+
 class Asset {
 
     /**
-     * Aquesta funció copia el diccionari a la memòria (triga uns minuts)...
+     * Aquesta funció copia el diccionari a la memòria
      */
 
     // https://stackoverflow.com/a/56455963
@@ -62,35 +65,37 @@ class Asset {
     */
 
     // https://stackoverflow.com/a/13084442
+    // https://stackoverflow.com/questions/4504291/how-to-speed-up-unzipping-time-in-java-android
     fun extractJarFile(jar: File, destdir: File){
         val jarfile = JarFile(jar)
         val enu = jarfile.entries()
         while (enu.hasMoreElements()) {
-            // val destdir = subdir //abc is my destination directory
             destdir.mkdir()
-            println(destdir)
             val je = enu.nextElement()
-            println(je.name)
-            if(je.name != "data/apertium-en-ca.en-ca.genitive.t1x"){
-                var fl = File(destdir, je.name)
-                if (!fl.exists()) {
-                    fl.parentFile?.mkdir()
-                    fl = File(destdir, je.name)
-                }
-                if (je.isDirectory) {
-                    continue
-                }
-                val inputStream = jarfile.getInputStream(je)
-                val fo = FileOutputStream(fl)
-                while (inputStream.available() > 0) {
-                    fo.write(inputStream.read())
-                }
-                fo.close()
-                inputStream.close()
+            var fl = File(destdir, je.name)
+            if (!fl.exists()) {
+                 fl.parentFile?.mkdir()
+                 fl = File(destdir, je.name)
             }
+            if (je.isDirectory) {
+                    continue
+            }
+            val inputStream = jarfile.getInputStream(je)
+            val fo = FileOutputStream(fl)
+
+            val inBuff = BufferedInputStream(inputStream)
+            val outBuff = BufferedOutputStream(fo)
+            val b = ByteArray(1024)
+            var n = 0
+            while (n != -1) {
+                    n = inBuff.read(b)
+                    outBuff.write(b, 0, n);
+            }
+            fo.close()
+            inputStream.close()
+        }
 
         }
 
     }
-}
 
