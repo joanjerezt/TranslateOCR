@@ -8,6 +8,13 @@ class ApertiumTranslator(
     private val cacheDir: File,
     private val classLoader: ClassLoader
 ) : Translator {
+
+    /***
+     * Aquesta funció configura els paràmetres d'Apertium i retorna el text traduït
+     */
+
+    /*** Mitzuli (c) 2014 - 2016 Mikel Artetxe ***
+     *** (c) 2023 - 2024 Joan Jerez            ***/
     @Throws(Exception::class)
     override fun translate(text: String?, displayMarks: Boolean, displayAmbiguity: Boolean): String {
 
@@ -22,4 +29,6 @@ class ApertiumTranslator(
             return org.apertium.Translator.translate(text)
         }
     }
+
+    /*** end ***/
 }

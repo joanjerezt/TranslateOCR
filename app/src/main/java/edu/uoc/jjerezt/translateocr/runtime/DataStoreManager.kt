@@ -19,6 +19,11 @@ import java.io.IOException
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class DataStoreManager {
 
+    /**
+     * Funcions per llegir i escriure valors de les preferències.
+     * També fer persistent l'estat dels diccionaris (copiant, disponible o esborrable si està instal·lat)
+     */
+
     suspend fun <T> saveValue(context: Context, key: Preferences.Key<T>, value: T )
     {
         context.dataStore.edit { setting ->

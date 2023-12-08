@@ -10,6 +10,10 @@ import java.io.File
 
 class CopyRepository {
 
+        /**
+         * En aquesta funció asíncrona, s'esborrarà el diccionari de la memòria
+         */
+
         fun removeDictionary(dictionary: TextView, holder: ViewHolder, download: Button) {
                 val code: String = Language().getCode(dictionary)
                 val context = holder.itemView.context
@@ -21,6 +25,10 @@ class CopyRepository {
                         download.setBackgroundColor(color)
                 }
         }
+
+        /**
+         * En aquesta funció asíncrona, es copiarà el diccionari a la memòria
+         */
 
         fun selectDictionary(dictionary: TextView, holder: ViewHolder, download: Button) {
                 val code: String = Language().getCode(dictionary)

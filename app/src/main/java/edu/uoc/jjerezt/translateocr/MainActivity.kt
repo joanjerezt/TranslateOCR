@@ -1,26 +1,16 @@
 package edu.uoc.jjerezt.translateocr
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import edu.uoc.jjerezt.translateocr.databinding.ActivityMainBinding
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import java.io.IOException
 
 
 /*
@@ -36,7 +26,12 @@ class MainActivity : AppCompatActivity() {
         // https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
         // https://commons.wikimedia.org/wiki/File:Oxygen480-categories-applications-development-translation.svg
-        val screen = installSplashScreen()
+
+        /**
+         * Splash screen amb l'icona de desenvolupament i traducció de The Oxygen Team (KDE)
+         * LGPL 3.0
+         */
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         // Set up an OnPreDrawListener to the root view.

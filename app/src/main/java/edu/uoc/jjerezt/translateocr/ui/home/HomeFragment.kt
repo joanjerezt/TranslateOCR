@@ -48,6 +48,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // onDestroyView.
     private val binding get() = _binding!!
 
+
+    /**
+     * La funció ens retorna el camí a la imatge escollida a la galeria
+     */
     // https://developer.android.com/training/basics/intents/result
     private lateinit var mediaFile : String
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -61,6 +65,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    /**
+     * La funció ens retorna si ha pogut desar la imatge capturada per la càmera
+     */
     private var cameraResultLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()) { success ->
         if(success){
@@ -83,6 +90,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         origText = root.findViewById(R.id.editTextTextMultiLine)
         val destText: TextView = root.findViewById(R.id.editTextTextMultiLine2)
 
+
+        /**
+         * Definim el selector dels idiomes d'origen
+         */
         origLanguage = root.findViewById(R.id.spinner);
         // https://developer.android.com/develop/ui/views/components/spinner
         // Create an ArrayAdapter using the string array and a default spinner layout.
@@ -97,6 +108,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             origLanguage.adapter = adapter
         }
 
+        /**
+         * Definim el selector dels idiomes de destí, dinàmicament, segons l'idioma d'origen
+         */
         origLanguage.onItemSelectedListener = this
         destLanguage = root.findViewById(R.id.spinner2)
         // https://stackoverflow.com/questions/14569296/setting-the-value-of-the-spinner-dynamically
@@ -105,6 +119,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val itemNames: Array<String> = root.context.resources.getStringArray(R.array.dest_languages_array)
         destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage.selectedItem.toString())
 
+        /**
+         * Sincronitzem l’idioma del diccionari predictiu del teclat amb l’idioma d’origen seleccionat
+         */
         // https://stackoverflow.com/questions/71157667/how-to-change-default-input-language-in-textinputedittext-java-android
         // https://stackoverflow.com/questions/56387603/how-we-can-specify-input-language-for-specific-edittextnot-for-whole-app-any-h
         // https://stackoverflow.com/questions/5715072/change-android-keyboard-language
@@ -114,14 +131,21 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.restartInput(origText)
 
+        /**
+         * Al prémer el botó, iniciem la traducció i mostrem la sortida
+         */
         translateButton.setOnClickListener {
-            println("Translate button pressed")
             val textSortida = translate(root.rootView, origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString(), origText.text.toString())
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
             destText.text = spanned;
         }
 
+        /**
+         * Al prémer el botó IMG, s'obre la galeria i s'obté el text a partir de l'imatge seleccionada
+         * Si no se selecciona cap imatge, s'agafarà una imatge de prova
+         * TODO Revisar que funcioni sense problemes
+         */
         val img: Button = root.findViewById(R.id.image)
         img.setOnClickListener {
             val imgTest = getImage(root.context)
@@ -131,6 +155,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             origText.setText(result)
         }
 
+        /**
+         * Al prémer el botó C, s'obre la càmera i s'obté el text a partir de l'imatge capturada
+         * Si no es captura cap imatge, s'agafarà una imatge de prova
+         * TODO Revisar que funcioni sense problemes
+         */
         val camera: Button = root.findViewById(R.id.camera)
         camera.setOnClickListener {
             val picture = takeImage(root.context)
@@ -192,6 +221,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         var markUnknown = false
         var markAmbiguity = false
 
+        /**
+         * En primer lloc, es llegeixen les preferències de manera síncrona sobre:
+         * les paraules desconegudes i l'ambiguitat
+         */
+
         runBlocking {
             withTimeoutOrNull(2000) {
                 markUnknown = DataStoreManager().readValue(
@@ -210,9 +244,9 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
-        println("Unknown: $markUnknown")
-        println("Ambiguity: $markAmbiguity")
-
+        /**
+         * Obté el codi del diccionari i el mode de traducció a partir de l'idioma d'origen i de destí
+         */
 
         val code = Language().getDictionaryCode(origLanguage, destLanguage)
         val mode = Language().getModeCode(origLanguage, destLanguage)
@@ -220,14 +254,19 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         if (!copiedDictionary) {
             return "<b>Not available, go to Dictionaries section and copy appropriate dictionary</b>"
         }
-        if(code == "un-un"){
+        if (code == "un-un") {
             return "<b>Not available</b>"
         }
         val offline = OfflineServiceProvider(
-                code = mode,
-                dir = File(view.context.cacheDir.absolutePath, code)
+            code = mode,
+            dir = File(view.context.cacheDir.absolutePath, code)
         )
 
+        /**
+         * La variable "jar" apunta al fitxer classes.dex dins de la carpeta del diccionari
+         * La variable "classLoader" defineix el carregador de classes Java
+         * S'obté el resultat de la traducció en text pla i es retorna formatejat en HTML
+         */
 
         val jar = File(offline.dir, "classes.dex")
         println("JAR:" + jar.absolutePath + "\n")
@@ -254,14 +293,15 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             internalCacheDir,
             classLoader
         ).translate(text, markUnknown, markAmbiguity)
-        val htmlResult: String = format(txtResult, markUnknown)
-
-        println(htmlResult)
-        return htmlResult
+        return format(txtResult, markUnknown)
     }
 
     /*** Mitzuli (c) 2014 - 2016 Mikel Artetxe ***
      *** (c) 2023 - 2024 Joan Jerez            ***/
+
+    /**
+     * Es formateja la sortida en HTML
+     */
 
     private val unknownPattern = Pattern.compile("\\B\\*((\\p{L}||\\p{N})+)\\b")
     private fun escape(s: String?): String {
@@ -288,6 +328,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     /*** end ***/
+
+    /**
+     * Si canviem l'idioma d'origen, es recalcularan els idiomes de destí disponibles
+     * S'ajustarà l'idioma del teclat al nou idioma d'origen seleccionat
+     */
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val item = parent?.getItemAtPosition(position)

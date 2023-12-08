@@ -8,6 +8,10 @@ import java.util.jar.JarFile
 
 class Asset {
 
+    /**
+     * Aquesta funció copia el diccionari a la memòria (triga uns minuts)...
+     */
+
     // https://stackoverflow.com/a/56455963
     @Throws(IOException::class)
     fun copyDictionaryToCache(context: Context, fileName: String): File = File(context.cacheDir, fileName)
@@ -21,6 +25,10 @@ class Asset {
             }
         }
 
+    /**
+    * Aquesta funció copia un fitxer a la memòria
+    */
+
     @Throws(IOException::class)
     fun copyAssetToCache(context: Context, fileName: String): File = File(context.cacheDir, fileName)
         .also {
@@ -33,6 +41,10 @@ class Asset {
             }
         }
 
+    /**
+    * Aquesta funció copia un fitxer a l'emmagatzematge persistent
+    */
+
     fun copyAssetToStorage(context: Context, dir: File, fileName: String): File = File(dir.absolutePath, fileName)
         .also {
             if (!it.exists()) {
@@ -43,6 +55,11 @@ class Asset {
                 }
             }
         }
+
+    /**
+    * Aquesta funció extreu els continguts del paquet del diccionari.
+    * Imprescindible per fer servir el traductor
+    */
 
     // https://stackoverflow.com/a/13084442
     fun extractJarFile(jar: File, destdir: File){

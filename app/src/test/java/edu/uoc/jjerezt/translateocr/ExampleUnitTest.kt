@@ -11,6 +11,10 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
 
+    /**
+     * Prova unitària senzilla per tal d'obtenir el codi del diccionari a partir de:
+     * l'idioma d'origen i de destí
+     */
     @Test
     fun getCodeDictionary(){
         val origLanguage = "Catalan"

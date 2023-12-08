@@ -11,11 +11,17 @@ import kotlinx.coroutines.withTimeoutOrNull
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    /**
+     * Aquesta funció activarà l'opció de marcar paraules desconegudes (a les preferències)
+     */
     private suspend fun markUnknown() {
-        println("We're going to mark unknown words")
         val mark = true
         DataStoreManager().saveValue(requireContext(), DataStoreManager.markUnknown, mark)
     }
+
+    /**
+     * Aquesta funció activarà l'opció de mostrar ambiguitats (a les preferències)
+     */
 
     private suspend fun markAmbiguity() {
         println("We're going to mark ambiguity")
@@ -23,11 +29,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
         DataStoreManager().saveValue(requireContext(), DataStoreManager.markAmbiguity, ambiguity)
     }
 
+    /**
+     * Aquesta funció desactivarà l'opció de mostrar ambiguitats (a les preferències)
+     */
+
     private suspend fun unmarkAmbiguity() {
         println("We're going to unmark ambiguity")
         val ambiguity = false
         DataStoreManager().saveValue(requireContext(), DataStoreManager.markAmbiguity, ambiguity)
     }
+
+    /**
+     * Aquesta funció desactivarà l'opció de marcar paraules desconegudes (a les preferències)
+     */
 
     private suspend fun unmarkUnknown() {
         println("We're going to unmark unknown words")
@@ -39,6 +53,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         // https://developer.android.com/guide/topics/ui/settings/customize-your-settings
 
+        /**
+         * Al prémer la casella corresponent, activarem o desactivarem les opcions
+         * TODO Fer la crida asíncrona
+         */
 
         val unknownWords: Preference? = findPreference("words") as Preference?
         unknownWords?.onPreferenceClickListener =
@@ -83,6 +101,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 true;
             }
+
+        /**
+         * Si cliquem a "License", es mostrarà la llicència de l'aplicació
+         * Si cliquem a "About", es mostrarà els crèdits de l'aplicació
+         */
 
         val license : Preference? = findPreference("license") as Preference?
         license!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {

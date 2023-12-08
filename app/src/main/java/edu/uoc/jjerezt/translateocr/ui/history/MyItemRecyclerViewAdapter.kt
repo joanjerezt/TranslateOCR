@@ -30,6 +30,11 @@ class MyItemRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
+
+        /**
+         * Fragment provisional a l'espera de poder implementar l'historial
+         */
+
         holder.idView.text = item.id
         holder.contentView.text = item.content
     }

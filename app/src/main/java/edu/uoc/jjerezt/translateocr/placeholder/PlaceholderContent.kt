@@ -6,18 +6,16 @@ import java.util.HashMap
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
- *
- * TODO: Replace all uses of this class before publishing your app.
  */
 object PlaceholderContent {
 
     /**
-     * An array of sample (placeholder) items.
+     * An array of (placeholder) items.
      */
     val ITEMS: MutableList<PlaceholderItem> = ArrayList()
 
     /**
-     * A map of sample (placeholder) items, by ID.
+     * A map of (placeholder) items, by ID.
      */
     val ITEM_MAP: MutableMap<String, PlaceholderItem> = HashMap()
 
@@ -34,6 +32,10 @@ object PlaceholderContent {
         ITEMS.add(item)
         ITEM_MAP[item.id] = item
     }
+
+    /**
+     * Es crea la llista de diccionaris precompilats
+     */
 
     private fun createPlaceholderItem(position: Int): PlaceholderItem {
         // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs

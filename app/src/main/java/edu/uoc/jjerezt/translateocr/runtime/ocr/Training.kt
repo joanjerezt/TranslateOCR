@@ -6,6 +6,10 @@ import java.io.File
 
 class Training {
 
+    /**
+     * Aquesta funció retorna el codi del fitxer d'entrenament d'OCR per cada idioma (només s'han inclòs els 6 idiomes amb més idiomes de destí)
+     */
+
     fun getCode(language: String): String {
         return when (language) {
             "Catalan" -> {
@@ -29,6 +33,10 @@ class Training {
             else -> "eng"
         }
     }
+
+    /**
+     * Aquesta funció copia el fitxer d'entrenament a la subcarpeta "tessdata"
+     */
 
     // https://developer.android.com/training/data-storage/app-specific#kotlin
     // https://stackoverflow.com/questions/11324348/why-app-appears-while-creating-directory-using-contextwraper-getdir

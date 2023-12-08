@@ -39,6 +39,11 @@ class MyDictionaryRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
+
+        /**
+         * S'inicialitzen les variables per a cada diccionari
+         */
+
         // holder.idView.text = item.id
         holder.contentView.text = item.content
         val download = holder.downloadButton
@@ -48,6 +53,12 @@ class MyDictionaryRecyclerViewAdapter(
         val red = context.resources.getColor(R.color.red, context.theme)
         var status = 0
         val code = Language().getCode(holder.contentView)
+
+        /**
+        * S'inicialitza l'estat (a les preferències) de cada un dels diccionaris disponibles
+         * Es llegeix l'estat de cadascun, segons l'estat el botó variarà
+        */
+
         DataStoreManager.dict[code] = intPreferencesKey("dict_${code}")
         runBlocking {
             withTimeoutOrNull(2000) {
@@ -69,6 +80,10 @@ class MyDictionaryRecyclerViewAdapter(
                 download.setBackgroundColor(red)
             }
         }
+        /**
+         * Diferents accions segons l'estat del botó
+         */
+
         download.setOnClickListener {
             when (download.text) {
                 "Copying" -> {

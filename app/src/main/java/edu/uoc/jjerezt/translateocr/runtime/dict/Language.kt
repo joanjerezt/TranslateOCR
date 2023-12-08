@@ -7,6 +7,10 @@ import android.widget.TextView
 
 class Language {
 
+    /**
+     * Aquesta funció retorna el codi del diccionari segons el idioma d'origen i de destí
+     */
+
     // https://svn.code.sf.net/p/apertium/svn/builds/language-pairs
     fun getDictionaryCode(origLanguage: String, destLanguage: String): String {
         return if ((origLanguage == "Afrikaans" && destLanguage == "Dutch") || (destLanguage == "Afrikaans" && origLanguage == "Dutch")) {
@@ -51,6 +55,10 @@ class Language {
             "un-un"
         }
     }
+
+    /**
+     * Aquesta funció retorna la localització segons l'idioma d'origen
+     */
 
     fun getLocale(origLanguage: String): ArrayList<String> {
         var lang = "en"
@@ -119,6 +127,10 @@ class Language {
         result.add(country)
         return result
     }
+
+    /**
+     * Aquesta funció retorna el mode segons l'idioma d'origen i de destí
+     */
 
     fun getModeCode(origLanguage: String, destLanguage: String): String {
         when (origLanguage) {
@@ -294,6 +306,11 @@ class Language {
         return "un-un"
     }
 
+    /**
+     * Aquesta funció retorna l'identificador del diccionari.
+     * TODO Funció possiblement redundant ja que el codi es pot obtenir de item.id des del RecyclerViewAdapter
+     */
+
     fun getCode(dictionary: TextView): String {
         var code = "un-un"
         if(dictionary.text.equals("English - Catalan")){
@@ -346,6 +363,10 @@ class Language {
         }
         return code
     }
+
+    /**
+     * Funció per obtenir les possibles llengües de destí a partir de la llengua d'origen
+     */
 
     fun getAdapterBasedOnOrig(
         dataAdapter: ArrayAdapter<String>,

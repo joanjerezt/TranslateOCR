@@ -23,6 +23,10 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
 
+    /**
+     * Es prova que la traducció de l'anglès al català, a partir del text anglès "Hello!", retorna el resultat esperat
+     */
+
     @Test
     fun textTranslation(){
 
@@ -69,6 +73,11 @@ class ExampleInstrumentedTest {
         ).translate(text, markUnknown, markAmbiguity)
         assertEquals("Hola!", txtResult.trim())
     }
+
+    /**
+     * Es prova que la traducció de l'anglès al català, a partir de la imatge de prova, retorna el resultat esperat
+     * S'ha fet servir el reconeixement òptic per obtenir el text "Hello World!"
+     */
 
     @Test
     fun ocrTranslation(){

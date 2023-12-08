@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 class CopyViewModel(private val copyRepository: CopyRepository): ViewModel() {
     // https://developer.android.com/kotlin/coroutines
 
+    /**
+     * Crides per crear una "coroutine" per copiar i esborrar un diccionari, i desar l'estat del diccionari a les preferències
+     */
     fun copy(content: TextView, holder: RecyclerView.ViewHolder, download: Button) {
         val code = Language().getCode(content)
         // Create a new coroutine to move the execution off the UI thread
