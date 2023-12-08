@@ -1,7 +1,7 @@
 package edu.uoc.jjerezt.translateocr
 
+import edu.uoc.jjerezt.translateocr.runtime.dict.Language
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**
@@ -10,8 +10,12 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun getCodeDictionary(){
+        val origLanguage = "Catalan"
+        val destLanguage = "English"
+        val code = Language().getDictionaryCode(origLanguage, destLanguage)
+        assertEquals(code, "en-ca")
     }
 }
