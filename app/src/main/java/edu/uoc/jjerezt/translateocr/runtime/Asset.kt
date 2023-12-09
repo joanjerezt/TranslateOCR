@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.util.jar.JarFile
 
 
@@ -67,35 +68,49 @@ class Asset {
     // https://stackoverflow.com/a/13084442
     // https://stackoverflow.com/questions/4504291/how-to-speed-up-unzipping-time-in-java-android
     fun extractJarFile(jar: File, destdir: File){
-        val jarfile = JarFile(jar)
-        val enu = jarfile.entries()
-        while (enu.hasMoreElements()) {
-            destdir.mkdir()
-            val je = enu.nextElement()
-            var fl = File(destdir, je.name)
-            if (!fl.exists()) {
-                 fl.parentFile?.mkdir()
-                 fl = File(destdir, je.name)
-            }
-            if (je.isDirectory) {
+        try {
+            val jarfile = JarFile(jar)
+            val enu = jarfile.entries()
+            while (enu.hasMoreElements()) {
+                destdir.mkdir()
+                val je = enu.nextElement()
+                println(je)
+                var fl = File(destdir, je.name)
+                if (!fl.exists()) {
+                    fl.parentFile?.mkdir()
+                    fl = File(destdir, je.name)
+                }
+                if (je.isDirectory) {
                     continue
+                }
+                val inputStream = jarfile.getInputStream(je)
+                val fo = FileOutputStream(fl)
+                writeFile(inputStream, fo)
+                fo.close()
+                inputStream.close()
+                println(enu.hasMoreElements())
             }
-            val inputStream = jarfile.getInputStream(je)
-            val fo = FileOutputStream(fl)
-
-            val inBuff = BufferedInputStream(inputStream)
-            val outBuff = BufferedOutputStream(fo)
-            val b = ByteArray(1024)
-            var n = 0
-            while (n != -1) {
-                    n = inBuff.read(b)
-                    outBuff.write(b, 0, n);
-            }
-            fo.close()
-            inputStream.close()
         }
-
+        catch(e: Exception){
+            e.printStackTrace()
         }
 
     }
+
+    private fun writeFile(inputStream: InputStream, fo: FileOutputStream){
+            val inBuff = BufferedInputStream(inputStream)
+            val outBuff = BufferedOutputStream(fo)
+            val b = ByteArray(2048)
+            while (true) {
+                val nBytes: Int = inBuff.read(b)
+                if (nBytes <= 0) {
+                    break
+                }
+                outBuff.write(b, 0, nBytes)
+            }
+            outBuff.flush()
+    }
+}
+
+
 

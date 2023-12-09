@@ -316,6 +316,9 @@ class Language {
         if(dictionary.text.equals("English - Catalan")){
             code = "en-ca"
         }
+        else if(dictionary.text.equals("Afrikaans - Dutch")){
+            code = "af-nl"
+        }
         else if(dictionary.text.equals("Catalan - Italian")){
             code = "ca-it"
         }

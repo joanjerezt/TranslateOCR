@@ -14,16 +14,35 @@ class CopyRepository {
          * En aquesta funció asíncrona, s'esborrarà el diccionari de la memòria
          */
 
+        // https://www.baeldung.com/java-delete-directory
+        private fun deleteDirectory(directoryToBeDeleted: File): Boolean {
+                val allContents = directoryToBeDeleted.listFiles();
+                if (allContents != null) {
+                        for (file in allContents) {
+                                deleteDirectory(file);
+                        }
+                }
+                return directoryToBeDeleted.delete();
+        }
+
         fun removeDictionary(dictionary: TextView, holder: ViewHolder, download: Button) {
                 val code: String = Language().getCode(dictionary)
                 val context = holder.itemView.context
                 val subdir = File(context.cacheDir.absolutePath, code)
-                val deleted: Boolean = subdir.delete()
-                if(deleted){
+                if(subdir.exists()){
+                        val deleted: Boolean = deleteDirectory(subdir)
+                        if(deleted){
+                                download.setText(R.string.download)
+                                val color = context.resources.getColor(R.color.green, context.theme)
+                                download.setBackgroundColor(color)
+                        }
+                }
+                else{
                         download.setText(R.string.download)
                         val color = context.resources.getColor(R.color.green, context.theme)
                         download.setBackgroundColor(color)
                 }
+
         }
 
         /**
