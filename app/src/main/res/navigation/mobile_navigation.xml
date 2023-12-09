@@ -27,8 +27,5 @@
         android:id="@+id/navigation_settings"
         android:name="edu.uoc.jjerezt.translateocr.ui.settings.SettingsFragment"
         android:label="@string/title_settings" >
-            <action android:id="@+id/action_go"
-                    app:destination="@id/navigation_dictionaries"
-            />
     </fragment>
 </navigation>

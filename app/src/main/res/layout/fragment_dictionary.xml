@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:weightSum="4">
 
     <TextView
         android:id="@+id/content_dict"
-        android:layout_width="80pt"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:layout_weight="2"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <Button
@@ -16,5 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:layout_weight="2"
         android:text="@string/download" />
 </LinearLayout>

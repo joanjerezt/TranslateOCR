@@ -392,7 +392,7 @@ class Language {
             "English" -> {
                 for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
                 {
-                    if (i == 1 || i == 4 || i == 5 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
+                    if (i == 1 || i == 4 || i == 6 || i == 10) dataAdapter.add(itemNames[i])
                 }
             }
             "Esperanto" -> {

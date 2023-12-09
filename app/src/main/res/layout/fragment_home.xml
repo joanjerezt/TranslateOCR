@@ -10,82 +10,78 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        tools:layout_editor_absoluteY="1dp"
+        android:weightSum="10">
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="32dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="10">
 
             <EditText
-                android:labelFor="@id/editTextTextMultiLine"
                 android:id="@+id/editTextTextMultiLine"
-                android:layout_width="350dp"
-                android:layout_height="180dp"
+                android:layout_height="160dp"
+                android:layout_width="match_parent"
                 android:ems="10"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"
-                android:autofillHints="" />
+                android:hint="@string/original_text"
+                android:importantForAutofill="no"
+                android:layout_weight="1.5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="8.5">
 
                 <Button
                     android:id="@+id/image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="60dp"
-                    android:text="IMG" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/baseline_image_24"
+                    android:contentDescription="@string/gallery"/>
 
                 <Button
                     android:id="@+id/camera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="10dp"
-                    android:text="C" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/baseline_camera_alt_24"
+                    android:contentDescription="@string/camera"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
+        <Spinner
+            android:id="@+id/spinner2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="48dp" />
 
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/editTextTextMultiLine2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:gravity="start|top"
+            android:layout_weight="7" />
 
-            <!-- <TextView
-                android:id="@+id/textView2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/textview2" /> -->
-
-            <TextView
-                android:id="@+id/editTextTextMultiLine2"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:autofillHints=""
-                android:ems="10"
-                android:gravity="start|top"/>
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
-                android:text="@string/translate" />
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/button"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/translate" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

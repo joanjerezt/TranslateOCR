@@ -49,4 +49,7 @@
     <string name="copying">Copying</string>
     <string name="extracting">Extracting</string>
     <string name="cache">Delete</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="original_text">Original text</string>
 </resources>
