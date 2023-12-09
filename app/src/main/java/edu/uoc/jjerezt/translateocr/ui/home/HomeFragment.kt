@@ -92,10 +92,31 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     /**
      * La funció ens retorna si ha pogut desar la imatge capturada per la càmera
      */
+    // https://developer.android.com/training/camera/camera-intents
+    // https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
+    // https://stackoverflow.com/questions/61941959/activityresultcontracts-takepicture
+    // https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
+    // https://stackoverflow.com/questions/42516126/fileprovider-illegalargumentexception-failed-to-find-configured-root
+    // https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
     private var cameraResultLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicture()) { success ->
         if(success){
-            println(success)
+            Log.d("TakePicture", "Selected URI: $photoUri")
+            val language = Training().getCode(origLanguage.selectedItem.toString())
+            val dataPath = Training().copyLanguage(language, view?.context!!)
+            val imgTest = getBitmapFromUri(photoUri)!!
+            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
+            origText.setText(result)
+        }
+        else{
+            Log.d("TakePicture", "No picture taken")
+            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello_world.png")
+            val language = "eng"
+            val dataPath = Training().copyLanguage(language, view?.context!!)
+            val imgTest = getBitmapFromUri(mediaFile.toUri())!!
+            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
+            origText.setText(result)
+
         }
     }
 
@@ -118,7 +139,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         /**
          * Definim el selector dels idiomes d'origen
          */
-        origLanguage = root.findViewById(R.id.spinner);
+        origLanguage = root.findViewById(R.id.spinner)
         // https://developer.android.com/develop/ui/views/components/spinner
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter.createFromResource(
@@ -162,13 +183,12 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val textSortida = translate(root.rootView, origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString(), origText.text.toString())
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            destText.text = spanned;
+            destText.text = spanned
         }
 
         /**
          * Al prémer el botó IMG, s'obre la galeria i s'obté el text a partir de l'imatge seleccionada
-         * Si no se selecciona cap imatge, s'agafarà una imatge de prova
-         * TODO Revisar que funcioni sense problemes
+         * Si no se selecciona cap imatge, agafarà una imatge de prova
          */
         val img: Button = root.findViewById(R.id.image)
         img.setOnClickListener {
@@ -178,21 +198,27 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         /**
          * Al prémer el botó C, s'obre la càmera i s'obté el text a partir de l'imatge capturada
-         * Si no es captura cap imatge, s'agafarà una imatge de prova
-         * TODO Revisar que funcioni sense problemes
+         * Si no es captura cap imatge, agafarà una imatge de prova
          */
         val camera: Button = root.findViewById(R.id.camera)
         camera.setOnClickListener {
-            val picture = takeImage(root.context)
-            val language = Training().getCode(origLanguage.selectedItem.toString())
-            val dataPath = Training().copyLanguage(language, root.context)
-            // val result = TesseractRecognition().recognize(picture, dataPath, language)
-            // origText.setText(result)
+            val newFile = File(root.context.cacheDir, "snap.jpg")
+            photoUri = FileProvider.getUriForFile(
+                root.context,
+                root.context.packageName + ".provider",
+                newFile
+            )
+            try {
+                cameraResultLauncher.launch(photoUri)
+            } catch (e: ActivityNotFoundException) {
+                e.printStackTrace()
+            }
         }
 
         return root
     }
 
+    private lateinit var photoUri: Uri
     private lateinit var destLanguage: Spinner
     private lateinit var origLanguage: Spinner
     private lateinit var origText: EditText
@@ -202,29 +228,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    // https://developer.android.com/training/camera/camera-intents
-    // https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
-    // https://stackoverflow.com/questions/61941959/activityresultcontracts-takepicture
-    // https://stackoverflow.com/questions/38200282/android-os-fileuriexposedexception-file-storage-emulated-0-test-txt-exposed
-    // https://stackoverflow.com/questions/42516126/fileprovider-illegalargumentexception-failed-to-find-configured-root
-    // https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
-    private fun takeImage(context: Context): File {
-        var mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
-        // Attempt to allocate a file to store the photo
-        val newFile = File(context.cacheDir, "snap.jpg")
-        val photoUri = FileProvider.getUriForFile(
-            context,
-            context.packageName + ".provider",
-            newFile
-        )
-        try {
-            cameraResultLauncher.launch(photoUri);
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
-        mediaFile = newFile.absolutePath
-        return File(mediaFile)
-    }
+
 
     private fun translate(
         view: View,
