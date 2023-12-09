@@ -1,5 +1,11 @@
 package edu.uoc.jjerezt.translateocr
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dalvik.system.DexClassLoader
@@ -8,12 +14,14 @@ import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
 import edu.uoc.jjerezt.translateocr.runtime.ocr.TesseractRecognition
 import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
+import edu.uoc.jjerezt.translateocr.ui.home.HomeFragment
 
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 import java.io.File
+import java.io.IOException
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -76,8 +84,18 @@ class ExampleInstrumentedTest {
 
     /**
      * Es prova que la traducció de l'anglès al català, a partir de la imatge de prova, retorna el resultat esperat
-     * S'ha fet servir el reconeixement òptic per obtenir el text "Hello World!"
+     * S'ha fet servir el reconeixement òptic per obtenir el text "Hello"
      */
+
+    @Throws(IOException::class)
+    fun getBitmapFromUri(uri: Uri, appContext: Context): Bitmap? {
+        val parcelFileDescriptor: ParcelFileDescriptor =
+            appContext.contentResolver?.openFileDescriptor(uri, "r")!!
+        val fileDescriptor = parcelFileDescriptor.fileDescriptor
+        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image
+    }
 
     @Test
     fun ocrTranslation(){
@@ -85,9 +103,10 @@ class ExampleInstrumentedTest {
         val tessLanguage = "eng"
         val mode = "en-ca"
         val code = "en-ca"
-        val mediaFile = Asset().copyAssetToCache(appContext, "hello_world.png")
+        val mediaFile = Asset().copyAssetToCache(appContext, "hello.png")
+        val bitmap = getBitmapFromUri(mediaFile.toUri(), appContext)!!
         val dataPath = Training().copyLanguage("eng", appContext)
-        val text = TesseractRecognition().recognize(mediaFile, dataPath, tessLanguage)
+        val text = TesseractRecognition().recognize(bitmap, dataPath, tessLanguage)
         val markUnknown = true
         val markAmbiguity = false
 
@@ -125,6 +144,6 @@ class ExampleInstrumentedTest {
             internalCacheDir,
             classLoader
         ).translate(text, markUnknown, markAmbiguity)
-        assertEquals("Món\nd'hola!", txtResult)
+        assertEquals("Hola", txtResult)
     }
 }

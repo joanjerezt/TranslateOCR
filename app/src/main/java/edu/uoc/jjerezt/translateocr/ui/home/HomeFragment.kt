@@ -80,7 +80,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             origText.setText(result)
         } else {
             Log.d("PhotoPicker", "No media selected")
-            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello_world.png")
+            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello.png")
             val language = "eng"
             val dataPath = Training().copyLanguage(language, view?.context!!)
             val imgTest = getBitmapFromUri(mediaFile.toUri())!!
@@ -110,7 +110,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         else{
             Log.d("TakePicture", "No picture taken")
-            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello_world.png")
+            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello.png")
             val language = "eng"
             val dataPath = Training().copyLanguage(language, view?.context!!)
             val imgTest = getBitmapFromUri(mediaFile.toUri())!!
