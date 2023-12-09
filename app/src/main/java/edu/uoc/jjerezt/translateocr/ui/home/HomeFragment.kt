@@ -2,8 +2,12 @@ package edu.uoc.jjerezt.translateocr.ui.home
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.LocaleList
+import android.os.ParcelFileDescriptor
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +23,7 @@ import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +40,7 @@ import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
+import java.io.IOException
 import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -48,20 +54,38 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    @Throws(IOException::class)
+    private fun getBitmapFromUri(uri: Uri): Bitmap? {
+        val parcelFileDescriptor: ParcelFileDescriptor =
+            context?.contentResolver?.openFileDescriptor(uri, "r")!!
+        val fileDescriptor = parcelFileDescriptor.fileDescriptor
+        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image
+    }
 
     /**
      * La funció ens retorna el camí a la imatge escollida a la galeria
      */
     // https://developer.android.com/training/basics/intents/result
-    private lateinit var mediaFile : String
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         // Callback is invoked after the user selects a media item or closes the
         // photo picker.
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
-            mediaFile = uri.path!!
+            val language = Training().getCode(origLanguage.selectedItem.toString())
+            val dataPath = Training().copyLanguage(language, view?.context!!)
+            val imgTest = getBitmapFromUri(uri)!!
+            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
+            origText.setText(result)
         } else {
             Log.d("PhotoPicker", "No media selected")
+            val mediaFile = Asset().copyAssetToCache(view?.context!!, "hello_world.png")
+            val language = "eng"
+            val dataPath = Training().copyLanguage(language, view?.context!!)
+            val imgTest = getBitmapFromUri(mediaFile.toUri())!!
+            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
+            origText.setText(result)
         }
     }
 
@@ -148,11 +172,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
          */
         val img: Button = root.findViewById(R.id.image)
         img.setOnClickListener {
-            val imgTest = getImage(root.context)
-            val language = Training().getCode(origLanguage.selectedItem.toString())
-            val dataPath = Training().copyLanguage(language, root.context)
-            val result = TesseractRecognition().recognize(imgTest, dataPath, language)
-            origText.setText(result)
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(PickVisualMediaRequest())
         }
 
         /**
@@ -165,8 +186,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val picture = takeImage(root.context)
             val language = Training().getCode(origLanguage.selectedItem.toString())
             val dataPath = Training().copyLanguage(language, root.context)
-            val result = TesseractRecognition().recognize(picture, dataPath, language)
-            origText.setText(result)
+            // val result = TesseractRecognition().recognize(picture, dataPath, language)
+            // origText.setText(result)
         }
 
         return root
@@ -181,13 +202,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    private fun getImage(context: Context): File {
-        mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        pickMedia.launch(PickVisualMediaRequest())
-        return File(mediaFile)
-    }
-
     // https://developer.android.com/training/camera/camera-intents
     // https://stackoverflow.com/questions/5991319/capture-image-from-camera-and-display-in-activity
     // https://stackoverflow.com/questions/61941959/activityresultcontracts-takepicture
@@ -195,7 +209,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // https://stackoverflow.com/questions/42516126/fileprovider-illegalargumentexception-failed-to-find-configured-root
     // https://inthecheesefactory.com/blog/how-to-share-access-to-file-with-fileprovider-on-android-nougat/en
     private fun takeImage(context: Context): File {
-        mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
+        var mediaFile = Asset().copyAssetToCache(context, "hello_world.png").absolutePath
         // Attempt to allocate a file to store the photo
         val newFile = File(context.cacheDir, "snap.jpg")
         val photoUri = FileProvider.getUriForFile(
@@ -349,6 +363,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("Not yet implemented")
+        println("No és possible no seleccionar cap idioma")
     }
 }
