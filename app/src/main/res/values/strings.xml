@@ -52,4 +52,5 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="original_text">Original text</string>
+    <string name="translated_text">Translated text</string>
 </resources>

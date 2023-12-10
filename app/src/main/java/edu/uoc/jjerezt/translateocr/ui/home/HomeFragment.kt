@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
 import android.os.ParcelFileDescriptor
+import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -134,8 +135,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         val translateButton: Button = root.findViewById(R.id.button)
         origText = root.findViewById(R.id.editTextTextMultiLine)
-        val destText: TextView = root.findViewById(R.id.editTextTextMultiLine2)
-
+        val destText: EditText = root.findViewById(R.id.editTextTextMultiLine2)
+        destText.showSoftInputOnFocus = false;
 
         /**
          * Definim el selector dels idiomes d'origen
@@ -184,7 +185,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val textSortida = translate(root.rootView, origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString(), origText.text.toString())
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            destText.text = spanned
+            destText.setText(spanned)
         }
 
         /**
