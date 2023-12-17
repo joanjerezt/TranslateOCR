@@ -1,12 +1,11 @@
 package edu.uoc.jjerezt.translateocr.ui.history
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-
-import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent.PlaceholderItem
+import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.jjerezt.translateocr.databinding.FragmentItemBinding
+import edu.uoc.jjerezt.translateocr.placeholder.DictionaryContent.PlaceholderItem
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
@@ -30,10 +29,6 @@ class MyItemRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-
-        /**
-         * Fragment provisional a l'espera de poder implementar l'historial
-         */
 
         holder.idView.text = item.id
         holder.contentView.text = item.content

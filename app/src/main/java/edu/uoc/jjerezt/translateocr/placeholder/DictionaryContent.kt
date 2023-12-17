@@ -7,7 +7,7 @@ import java.util.HashMap
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  */
-object PlaceholderContent {
+object DictionaryContent {
 
     /**
      * An array of (placeholder) items.

@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import edu.uoc.jjerezt.translateocr.R
-import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent
+import edu.uoc.jjerezt.translateocr.placeholder.DictionaryContent
 
 /**
  * A fragment representing a list of Items.
@@ -39,7 +39,7 @@ class HistoryFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS)
+                adapter = MyItemRecyclerViewAdapter(DictionaryContent.ITEMS)
             }
         }
         return view

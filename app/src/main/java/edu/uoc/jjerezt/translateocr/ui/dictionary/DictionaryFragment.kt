@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.jjerezt.translateocr.R
-import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent
+import edu.uoc.jjerezt.translateocr.placeholder.DictionaryContent
 
 /**
  * A fragment representing a list of Items.
@@ -39,7 +39,7 @@ class DictionaryFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyDictionaryRecyclerViewAdapter(PlaceholderContent.ITEMS)
+                adapter = MyDictionaryRecyclerViewAdapter(DictionaryContent.ITEMS)
             }
         }
         return view

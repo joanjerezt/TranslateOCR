@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentDictionaryBinding
-import edu.uoc.jjerezt.translateocr.placeholder.PlaceholderContent.PlaceholderItem
+import edu.uoc.jjerezt.translateocr.placeholder.DictionaryContent.PlaceholderItem
 import edu.uoc.jjerezt.translateocr.runtime.DataStoreManager
 import edu.uoc.jjerezt.translateocr.runtime.dict.CopyRepository
 import edu.uoc.jjerezt.translateocr.runtime.dict.CopyViewModel
