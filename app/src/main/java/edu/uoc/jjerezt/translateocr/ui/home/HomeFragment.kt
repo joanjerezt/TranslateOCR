@@ -4,12 +4,13 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BlendModeColorFilter
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
 import android.os.ParcelFileDescriptor
-import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,14 +22,16 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import dalvik.system.DexClassLoader
 import edu.uoc.jjerezt.translateocr.R
 import edu.uoc.jjerezt.translateocr.databinding.FragmentHomeBinding
@@ -41,6 +44,7 @@ import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.IOException
 import java.util.Locale
@@ -120,6 +124,16 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             origText.setText(result)
 
         }
+    }
+
+    // https://stackoverflow.com/questions/2390102/how-to-set-selected-item-of-spinner-by-value-not-by-position
+    private fun getIndex(spinner: Spinner, myString: String): Int {
+        for (i in 0 until spinner.count) {
+            if (spinner.getItemAtPosition(i).toString().equals(myString, ignoreCase = true)) {
+                return i
+            }
+        }
+        return 0
     }
 
     override fun onCreateView(
@@ -217,6 +231,34 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
+        /**
+         * Al prémer el botó E, s'intercanvien les llengües d'origen i de destí
+         */
+        val exchange: Button = root.findViewById(R.id.exchange)
+        exchange.setOnClickListener {
+
+            val origOld = origLanguage.selectedItem.toString()
+            val destOld = destLanguage.selectedItem.toString()
+            if(destOld == "Esperanto" && origOld != "English"){
+                val snack = Snackbar.make(requireView(),
+                    "It's not possible to exchange $destOld and $origOld", 5000)
+                snack.show()
+            }
+            else if(origOld == "Haitian" || origOld == "Romanian" || origOld == "Swedish"){
+                val snack = Snackbar.make(requireView(),
+                    "It's not possible to put $origOld as a destination language", 5000)
+                snack.show()
+            }
+            else{
+                buttonE = 1
+                origLanguage.setSelection(getIndex(origLanguage, destOld))
+                val dataAdapter2 = ArrayAdapter<String>(root.context, android.R.layout.simple_spinner_dropdown_item)
+                val itemNames2: Array<String> = root.context.resources.getStringArray(R.array.dest_languages_array)
+                destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter2, itemNames2, destOld)
+                destLanguage.setSelection(getIndex(destLanguage, origOld))
+            }
+        }
+
         return root
     }
 
@@ -224,6 +266,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var destLanguage: Spinner
     private lateinit var origLanguage: Spinner
     private lateinit var origText: EditText
+    private var buttonE = 0
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -361,11 +404,17 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         origText.imeHintLocales = LocaleList(Locale(locale[0], locale[1]))
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.restartInput(origText)
-        val context = requireView().context
-        // Create an ArrayAdapter using the string array and a default spinner layout.
-        val dataAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item)
-        val itemNames: Array<String> = context.resources.getStringArray(R.array.dest_languages_array)
-        destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage.selectedItem.toString())
+        if(buttonE == 0){
+            val context = requireView().context
+            // Create an ArrayAdapter using the string array and a default spinner layout.
+            val dataAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item)
+            val itemNames: Array<String> = context.resources.getStringArray(R.array.dest_languages_array)
+            destLanguage.adapter = Language().getAdapterBasedOnOrig(dataAdapter, itemNames, origLanguage.selectedItem.toString())
+        }
+        else{
+            buttonE = 0
+        }
+
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

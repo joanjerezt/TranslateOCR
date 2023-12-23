@@ -416,7 +416,7 @@ class Language {
             "Haitian" -> {
                 for (i in itemNames.indices)  // Maximum size of i upto --> Your Array Size
                 {
-                    if (i == 4) dataAdapter.add(itemNames[i])
+                    if (i == 3) dataAdapter.add(itemNames[i])
                 }
             }
             "Italian" -> {
