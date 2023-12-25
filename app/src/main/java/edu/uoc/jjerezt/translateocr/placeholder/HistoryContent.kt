@@ -23,12 +23,7 @@ object HistoryContent {
      */
     val ITEM_MAP: MutableMap<String, HistoryItem> = HashMap()
 
-    private val db = Room.databaseBuilder(
-        MainActivity().applicationContext,
-        AppDatabase::class.java, "translateocr"
-    ).build()
-
-    private val COUNT = db.entryDao().getAll().size
+    private const val COUNT = 1
 
     init {
         // Add some sample items.
@@ -48,9 +43,10 @@ object HistoryContent {
 
     private fun createPlaceholderItem(position: Int): HistoryItem {
 
-        val list = db.entryDao().getAll()
-        return HistoryItem(position.toString(), list[position].origText, list[position].destText,
-            list[position].timestamp, list[position].favorite)
+        // val list = db.entryDao().getAll()
+        return HistoryItem("1", "Hola", "Hello", Date(), true)
+        // return HistoryItem(position.toString(), list[position].origText, list[position].destText,
+        //    list[position].timestamp, list[position].favorite)
 
     }
 

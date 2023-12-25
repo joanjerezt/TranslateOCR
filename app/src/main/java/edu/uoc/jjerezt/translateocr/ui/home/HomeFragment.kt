@@ -4,9 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.LocaleList
@@ -25,12 +22,11 @@ import android.widget.Spinner
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
 import com.google.android.material.snackbar.Snackbar
 import dalvik.system.DexClassLoader
 import edu.uoc.jjerezt.translateocr.R
@@ -38,15 +34,21 @@ import edu.uoc.jjerezt.translateocr.databinding.FragmentHomeBinding
 import edu.uoc.jjerezt.translateocr.runtime.Asset
 import edu.uoc.jjerezt.translateocr.runtime.DataStoreManager
 import edu.uoc.jjerezt.translateocr.runtime.OfflineServiceProvider
+import edu.uoc.jjerezt.translateocr.runtime.db.AppDatabase
+import edu.uoc.jjerezt.translateocr.runtime.db.Entry
+import edu.uoc.jjerezt.translateocr.runtime.db.EntryRepository
+import edu.uoc.jjerezt.translateocr.runtime.db.EntryViewModel
+import edu.uoc.jjerezt.translateocr.runtime.dict.CopyRepository
+import edu.uoc.jjerezt.translateocr.runtime.dict.CopyViewModel
 import edu.uoc.jjerezt.translateocr.runtime.dict.Language
 import edu.uoc.jjerezt.translateocr.runtime.ocr.TesseractRecognition
 import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
 import edu.uoc.jjerezt.translateocr.runtime.text.ApertiumTranslator
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
-import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.IOException
+import java.util.Date
 import java.util.Locale
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -147,6 +149,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        val db = Room.databaseBuilder(root.context, AppDatabase::class.java, "translateocr").build()
         val translateButton: Button = root.findViewById(R.id.button)
         origText = root.findViewById(R.id.editTextTextMultiLine)
         val destText: EditText = root.findViewById(R.id.editTextTextMultiLine2)
@@ -200,6 +203,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
             destText.setText(spanned)
+            if(!textSortida.startsWith("<b>")){
+                val entry = Entry(0, timestamp = Date(), origText = origText.text.toString(),
+                    destText = textSortida, dictCode = Language().getDictionaryCode(origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString()),
+                    favorite = false, mode = Language().getModeCode(origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString()))
+                EntryViewModel(entryRepository = EntryRepository()).insert(db, entry)
+                EntryViewModel(entryRepository = EntryRepository()).close(db)
+            }
         }
 
         /**

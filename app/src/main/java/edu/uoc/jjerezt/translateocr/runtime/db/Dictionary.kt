@@ -9,5 +9,5 @@ data class Dictionary(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "stage") val stage: Int,
     @ColumnInfo(name = "orig_dest_lang") val code: String,
-    @ColumnInfo(name = "copied") val favorite: Boolean
+    @ColumnInfo(name = "copied") val copied: Boolean
 )

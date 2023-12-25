@@ -7,10 +7,11 @@ import java.util.Date
 
 @Entity
 data class Entry(
-    @PrimaryKey val uid: Int,
+    @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "time") val timestamp: Date,
     @ColumnInfo(name = "orig_text") val origText: String,
     @ColumnInfo(name = "dest_text") val destText: String,
-    @ColumnInfo(name = "dictionary") val dictionary: Dictionary,
+    @ColumnInfo(name = "mode") val mode: String,
+    @ColumnInfo(name = "dictCode") val dictCode: String,
     @ColumnInfo(name = "favorite") val favorite: Boolean
-    )
+)

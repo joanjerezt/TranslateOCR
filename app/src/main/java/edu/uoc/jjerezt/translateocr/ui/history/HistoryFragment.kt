@@ -1,15 +1,18 @@
 package edu.uoc.jjerezt.translateocr.ui.history
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.room.Room
 import edu.uoc.jjerezt.translateocr.R
-import edu.uoc.jjerezt.translateocr.placeholder.DictionaryContent
+import edu.uoc.jjerezt.translateocr.runtime.db.AppDatabase
+import edu.uoc.jjerezt.translateocr.runtime.db.Dictionary
+import java.util.Date
 
 /**
  * A fragment representing a list of Items.
@@ -26,11 +29,74 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    fun init_dictionaries(db: AppDatabase) {
+
+        val dictionaries : MutableList<Dictionary> = ArrayList()
+        dictionaries.add(Dictionary(1, 0, "af-nl", false))
+        dictionaries.add(Dictionary(2, 0, "ca-it", false))
+        dictionaries.add(Dictionary(3, 0, "en-ca", false))
+        dictionaries.add(Dictionary(4,0,"en-es",false))
+        dictionaries.add(Dictionary(5, 0, "en-gl", false))
+        dictionaries.add(Dictionary(6, 0, "eo-ca", false))
+        dictionaries.add(Dictionary(7, 0, "eo-en", false))
+        dictionaries.add(Dictionary(8, 0, "eo-es", false))
+        dictionaries.add(Dictionary(9, 0, "eo-fr", false))
+        dictionaries.add(Dictionary(10, 0, "es-ca", false))
+        dictionaries.add(Dictionary(11, 0, "es-gl", false))
+        dictionaries.add(Dictionary(12, 0, "es-pt", false))
+        dictionaries.add(Dictionary(13, 0, "es-ro", false))
+        dictionaries.add(Dictionary(14, 0, "eu-en", false))
+        dictionaries.add(Dictionary(15, 0, "eu-es", false))
+        dictionaries.add(Dictionary(16, 0, "fr-ca", false))
+        dictionaries.add(Dictionary(17, 0, "fr-es", false))
+        dictionaries.add(Dictionary(18, 0, "ht-en", false))
+        dictionaries.add(Dictionary(19, 0, "pt-ca", false))
+        dictionaries.add(Dictionary(20, 0, "pt-gl", false))
+        dictionaries.add(Dictionary(21, 0, "sv-da", false))
+
+        for(i in dictionaries.indices){
+            db.dictionaryDao().insertAll(dictionaries[i])
+        }
+
+    }
+
+    data class HistoryItem(
+        val id: Int,
+        val origText: String,
+        val destText: String,
+        val timestamp: Date,
+        val favorite: Boolean,
+        val mode: String,
+        val code: String
+    ) {
+        override fun toString(): String = origText
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history_list, container, false)
+        val db = Room.databaseBuilder(view.context, AppDatabase::class.java, "translateocr").allowMainThreadQueries().build()
+        val dictionaries = db.dictionaryDao().getAll()
+        if(dictionaries.isEmpty()){
+            init_dictionaries(db)
+        }
+
+        val items : MutableList<HistoryItem> = ArrayList()
+        val entries = db.entryDao().getAll()
+        db.close()
+
+        if(entries.isEmpty()){
+            items.add(HistoryItem(2, "Bon dia", "Bonjour",
+                Date(), false, "ca-fr", "fr-ca"))
+        }
+        else{
+            for (i in entries.indices) {
+                items.add(HistoryItem(entries[i].uid, entries[i].origText, entries[i].destText,
+                    entries[i].timestamp, entries[i].favorite, entries[i].dictCode, entries[i].mode))
+            }
+        }
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -39,7 +105,8 @@ class HistoryFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyItemRecyclerViewAdapter(DictionaryContent.ITEMS)
+
+                adapter = MyHistoryRecyclerViewAdapter(items)
             }
         }
         return view
