@@ -29,7 +29,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    fun init_dictionaries(db: AppDatabase) {
+    private fun initDictionaries(db: AppDatabase) {
 
         val dictionaries : MutableList<Dictionary> = ArrayList()
         dictionaries.add(Dictionary(1, 0, "af-nl", false))
@@ -65,7 +65,7 @@ class HistoryFragment : Fragment() {
         val origText: String,
         val destText: String,
         val timestamp: Date,
-        val favorite: Boolean,
+        var favorite: Boolean,
         val mode: String,
         val code: String
     ) {
@@ -78,23 +78,33 @@ class HistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history_list, container, false)
         val db = Room.databaseBuilder(view.context, AppDatabase::class.java, "translateocr").allowMainThreadQueries().build()
+        // S'insereix la llista de diccionaris a la base de dades
         val dictionaries = db.dictionaryDao().getAll()
         if(dictionaries.isEmpty()){
-            init_dictionaries(db)
+            initDictionaries(db)
         }
-
+        // Obtenim totes les entrades de la base de dades
         val items : MutableList<HistoryItem> = ArrayList()
         val entries = db.entryDao().getAll()
         db.close()
 
-        if(entries.isEmpty()){
-            items.add(HistoryItem(2, "Bon dia", "Bonjour",
-                Date(), false, "ca-fr", "fr-ca"))
-        }
-        else{
+        /**
+         * Si hi ha entrades, s'afegiran en una llista
+         */
+        if(entries.isNotEmpty()){
             for (i in entries.indices) {
                 items.add(HistoryItem(entries[i].uid, entries[i].origText, entries[i].destText,
                     entries[i].timestamp, entries[i].favorite, entries[i].dictCode, entries[i].mode))
+            }
+        }
+
+        /**
+         * Si és favorit, es desplaçarà el registre al capdamunt de la llista
+         */
+        for (i in items.indices){
+            if(items[i].favorite){
+                items.add(0, items[i])
+                items.removeAt(i+1)
             }
         }
 

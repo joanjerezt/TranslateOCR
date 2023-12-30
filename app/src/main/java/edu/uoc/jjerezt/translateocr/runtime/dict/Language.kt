@@ -57,6 +57,99 @@ class Language {
     }
 
     /**
+     * Aquesta funció retorna el país segons l'idioma
+     */
+
+    fun getCountryByLanguageCode(languageCode: String): String {
+
+        when (languageCode) {
+            "da" -> {
+                return "DK"
+            }
+            "en" -> {
+                return "GB"
+            }
+            "gl" -> {
+                return "ES"
+            }
+            "es" -> {
+                return "ES"
+            }
+            "eo" -> {
+                return "UN"
+            }
+            "ca" -> {
+                return "AD"
+            }
+            "fr" -> {
+                return "FR"
+            }
+            "af" -> {
+                return "ZA"
+            }
+            "nl" -> {
+                return "NL"
+            }
+            "ro" -> {
+                return "RO"
+            }
+            "it" -> {
+                return "IT"
+            }
+            "pt" -> {
+                return "PT"
+            }
+            "sv" -> {
+                return "SE"
+            }
+            "ht" -> {
+                return "HT"
+            }
+        }
+        return "UN"
+
+    }
+
+    /**
+     * Aquesta funció retorna la bandera segons el país d'origen
+     */
+
+    fun getFlagByCountryCode(character: Char): String {
+
+        val code: Int = when (character.uppercaseChar()) {
+            'A' -> 0x1F1E6
+            'B' -> 0x1F1E7
+            'C' -> 0x1F1E8
+            'D' -> 0x1F1E9
+            'E' -> 0x1F1EA
+            'F' -> 0x1F1EB
+            'G' -> 0x1F1EC
+            'H' -> 0x1F1ED
+            'I' -> 0x1F1EE
+            'J' -> 0x1F1EF
+            'K' -> 0x1F1F0
+            'L' -> 0x1F1F1
+            'M' -> 0x1F1F2
+            'N' -> 0x1F1F3
+            'O' -> 0x1F1F4
+            'P' -> 0x1F1F5
+            'Q' -> 0x1F1F6
+            'R' -> 0x1F1F7
+            'S' -> 0x1F1F8
+            'T' -> 0x1F1F9
+            'U' -> 0x1F1FA
+            'V' -> 0x1F1FB
+            'W' -> 0x1F1FC
+            'X' -> 0x1F1FD
+            'Y' -> 0x1F1FE
+            'Z' -> 0x1F1FF
+            else -> 0
+        }
+
+        return String(Character.toChars(code))
+    }
+
+    /**
      * Aquesta funció retorna la localització segons l'idioma d'origen
      */
 
@@ -74,11 +167,11 @@ class Language {
             }
             "Esperanto" -> {
                 lang = "eo"
-                country = "PL"
+                country = "UN"
             }
             "Catalan" -> {
                 lang = "ca"
-                country = "ES"
+                country = "AD"
             }
             "Basque" -> {
                 lang = "eu"

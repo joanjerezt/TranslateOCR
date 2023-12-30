@@ -7,6 +7,9 @@ import kotlinx.coroutines.launch
 
 class EntryViewModel(private val entryRepository: EntryRepository): ViewModel() {
 
+    /**
+     * Crides per crear una "coroutine" per fer consultes a la base de dades
+     */
     fun insert(db: AppDatabase, entry: Entry) {
         viewModelScope.launch(Dispatchers.IO) {
             entryRepository.addEntry(db, entry)
@@ -30,6 +33,12 @@ class EntryViewModel(private val entryRepository: EntryRepository): ViewModel() 
     fun edit(db: AppDatabase, entry: Entry) {
         viewModelScope.launch(Dispatchers.IO) {
             entryRepository.editEntry(db, entry)
+        }
+    }
+
+    fun remove(db: AppDatabase, entry: Entry){
+        viewModelScope.launch(Dispatchers.IO) {
+            entryRepository.removeEntry(db, entry)
         }
     }
 }
