@@ -425,7 +425,7 @@ class Language {
             code = "es-ca"
         }
         else if(dictionary.text.equals("Spanish - Galician")){
-            code = "es-pt"
+            code = "es-gl"
         }
         else if(dictionary.text.equals("Spanish - Portuguese")){
             code = "es-pt"
