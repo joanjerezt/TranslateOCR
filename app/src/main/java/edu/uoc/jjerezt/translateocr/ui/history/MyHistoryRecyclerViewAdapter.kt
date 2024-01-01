@@ -1,6 +1,7 @@
 package edu.uoc.jjerezt.translateocr.ui.history
 
 import android.graphics.Typeface
+import android.util.ArrayMap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
@@ -29,7 +30,6 @@ class MyHistoryRecyclerViewAdapter(
 ) : RecyclerView.Adapter<MyHistoryRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder(
             FragmentHistoryBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -39,8 +39,8 @@ class MyHistoryRecyclerViewAdapter(
         )
     }
 
-    private val favoriteStatus : MutableList<Boolean> = ArrayList()
-
+    private var favorites: Int = 0
+    private val actualPosition: MutableMap<Int, Int> = ArrayMap()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
@@ -48,7 +48,6 @@ class MyHistoryRecyclerViewAdapter(
         /**
          * S'inicialitzen les variables per a cada registre de l'historial
          */
-
         holder.origText.text = item.origText
         val spanned = HtmlCompat.fromHtml(item.destText, HtmlCompat.FROM_HTML_MODE_COMPACT)
         holder.destText.text = spanned
@@ -56,12 +55,10 @@ class MyHistoryRecyclerViewAdapter(
         val date = df.format(item.timestamp)
         holder.date.text = date
         holder.date.setTypeface(holder.date.typeface, Typeface.BOLD)
-        favoriteStatus.add(index=position, element = item.favorite)
 
         /**
          * S'obté la bandera del país del idioma d'origen i de destí
          */
-
         val firstLanguage = item.mode.subSequence(0,2).toString()
         val secondLanguage = item.mode.subSequence(3,5).toString()
 
@@ -83,42 +80,76 @@ class MyHistoryRecyclerViewAdapter(
         /**
          * S'inicialitza l'estat de favorit
          */
-
-        if(favoriteStatus[position]){
+        if(values[position].favorite){
             holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_24)
+            favorites += 1
         }
         else{
             holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
         }
 
         /**
+         * S'inicialitzen les posicions originals dels registres
+         */
+        for ( i in values.indices){
+            actualPosition[i] = i
+        }
+
+        /**
          * Si es prem el botó de favorit, es marcarà el registre com a favorit i es desplaçarà al capdamunt de la llista
          */
-
         holder.favorite.setOnClickListener {
             val db = Room.databaseBuilder(holder.itemView.context, AppDatabase::class.java, "translateocr").build()
             val entry = Entry(item.id, item.timestamp, item.origText, item.destText, item.mode, item.code, !item.favorite)
             EntryViewModel(entryRepository = EntryRepository()).edit(db, entry)
-            if(favoriteStatus[position]){
+            /** DEBUG
+            * One element OK
+            * Two elements OK
+            * Three elements OK
+            */
+            // OK
+            if(values[position].favorite){
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
-                values[position].favorite = !values[position].favorite
-                values.sortBy { it.timestamp }
-                for(i in values.indices){
-                    favoriteStatus[position] = values[i].favorite
+                println("Unmark original position $position")
+                favorites -= 1
+                notifyItemMoved(actualPosition[position]!!, values[position].id-1)
+                val unmarked = actualPosition[position]!!
+                for (i in values.indices){
+                    if((values[i].id - 1) == position){
+                        actualPosition[i] = values[i].id-1
+                    }
+                    else if(unmarked > actualPosition[i]!!){
+                        actualPosition[i] = actualPosition[i]!!
+                    }
+                    else if(unmarked < actualPosition[i]!!){
+                        actualPosition[i] = actualPosition[i]!!-1
+                    }
                 }
-                notifyItemRangeChanged(0, values.size)
+
             }
+            // OK
             else{
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_24)
-                favoriteStatus[position] = !favoriteStatus[position]
-                values.add(0, values[position])
-                values.removeAt(position+1)
-                notifyItemMoved(position, 0)
-                favoriteStatus.add(0, favoriteStatus[position])
-                favoriteStatus.removeAt(position+1)
+                println("Mark original position $position")
+                notifyItemMoved(actualPosition[position]!!, 0)
+                favorites += 1
+                for (i in values.indices){
+                    if(i == position){
+                        actualPosition[i] = 0
+                    }
+                    else{
+                        actualPosition[i] = actualPosition[i]!! + 1
+                    }
+                }
             }
+            values[position].favorite = !values[position].favorite
             EntryViewModel(entryRepository = EntryRepository()).close(db)
-
+            for(i in values.indices){
+                println("*******************")
+                println("Original: $i\n")
+                println("Actual: " + actualPosition[i])
+                println("*******************")
+            }
         }
 
         /**
