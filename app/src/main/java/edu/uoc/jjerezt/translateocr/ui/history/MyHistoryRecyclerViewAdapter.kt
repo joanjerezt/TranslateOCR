@@ -112,19 +112,26 @@ class MyHistoryRecyclerViewAdapter(
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
                 println("Unmark original position $position")
                 favorites -= 1
-                notifyItemMoved(actualPosition[position]!!, values[position].id-1)
-                val unmarked = actualPosition[position]!!
-                for (i in values.indices){
+                /*notifyItemMoved(actualPosition[position]!!, values.size-1)
+                val unmark = actualPosition[position]!!
+                 for (i in values.indices){
                     if((values[i].id - 1) == position){
-                        actualPosition[i] = values[i].id-1
+                        actualPosition[i] = values.size-1
                     }
-                    else if(unmarked > actualPosition[i]!!){
-                        actualPosition[i] = actualPosition[i]!!
-                    }
-                    else if(unmarked < actualPosition[i]!!){
+                    else if(unmark > actualPosition[i]!!){
                         actualPosition[i] = actualPosition[i]!!-1
                     }
-                }
+                    else{
+                        if((actualPosition[i]!!+1)>values.size-1){
+                            notifyItemMoved(actualPosition[i]!!, values.size-1)
+                            actualPosition[i] = values.size-1
+                        }
+                        else{
+                            actualPosition[i] = actualPosition[i]!!+1
+                        }
+
+                    }
+                }*/
 
             }
             // OK
@@ -133,12 +140,23 @@ class MyHistoryRecyclerViewAdapter(
                 println("Mark original position $position")
                 notifyItemMoved(actualPosition[position]!!, 0)
                 favorites += 1
+                val mark = actualPosition[position]!!
                 for (i in values.indices){
                     if(i == position){
                         actualPosition[i] = 0
                     }
+                    else if(mark < actualPosition[i]!!){
+                        actualPosition[i] = actualPosition[i]!!
+                    }
                     else{
-                        actualPosition[i] = actualPosition[i]!! + 1
+                        if((actualPosition[i]!!+1)>values.size-1){
+                            notifyItemMoved(actualPosition[i]!!, values.size-1)
+                            actualPosition[i] = values.size-1
+                        }
+                        else{
+                            actualPosition[i] = actualPosition[i]!! + 1
+                        }
+
                     }
                 }
             }
