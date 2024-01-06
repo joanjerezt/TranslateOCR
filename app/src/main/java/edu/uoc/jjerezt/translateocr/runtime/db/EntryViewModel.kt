@@ -12,7 +12,12 @@ class EntryViewModel(private val entryRepository: EntryRepository): ViewModel() 
      */
     fun insert(db: AppDatabase, entry: Entry) {
         viewModelScope.launch(Dispatchers.IO) {
-            entryRepository.addEntry(db, entry)
+            try {
+                entryRepository.addEntry(db, entry)
+            }
+            catch(ex: Exception){
+                println(ex)
+            }
         }
     }
 
@@ -26,19 +31,37 @@ class EntryViewModel(private val entryRepository: EntryRepository): ViewModel() 
 
     fun close(database: AppDatabase){
         viewModelScope.launch(Dispatchers.IO) {
-            entryRepository.closeDatabase(database)
+            try{
+                entryRepository.closeDatabase(database)
+            }
+            catch(ex: Exception){
+                println(ex)
+            }
+
         }
     }
 
     fun edit(db: AppDatabase, entry: Entry) {
         viewModelScope.launch(Dispatchers.IO) {
-            entryRepository.editEntry(db, entry)
+            try{
+                entryRepository.editEntry(db, entry)
+            }
+            catch(ex: Exception){
+                println(ex)
+            }
+
         }
     }
 
     fun remove(db: AppDatabase, entry: Entry){
         viewModelScope.launch(Dispatchers.IO) {
-            entryRepository.removeEntry(db, entry)
+            try{
+                entryRepository.removeEntry(db, entry)
+            }
+            catch(ex: Exception){
+                println(ex)
+            }
+
         }
     }
 }

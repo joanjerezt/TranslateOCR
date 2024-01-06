@@ -112,27 +112,6 @@ class MyHistoryRecyclerViewAdapter(
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
                 println("Unmark original position $position")
                 favorites -= 1
-                /*notifyItemMoved(actualPosition[position]!!, values.size-1)
-                val unmark = actualPosition[position]!!
-                 for (i in values.indices){
-                    if((values[i].id - 1) == position){
-                        actualPosition[i] = values.size-1
-                    }
-                    else if(unmark > actualPosition[i]!!){
-                        actualPosition[i] = actualPosition[i]!!-1
-                    }
-                    else{
-                        if((actualPosition[i]!!+1)>values.size-1){
-                            notifyItemMoved(actualPosition[i]!!, values.size-1)
-                            actualPosition[i] = values.size-1
-                        }
-                        else{
-                            actualPosition[i] = actualPosition[i]!!+1
-                        }
-
-                    }
-                }*/
-
             }
             // OK
             else{
@@ -162,12 +141,6 @@ class MyHistoryRecyclerViewAdapter(
             }
             values[position].favorite = !values[position].favorite
             EntryViewModel(entryRepository = EntryRepository()).close(db)
-            for(i in values.indices){
-                println("*******************")
-                println("Original: $i\n")
-                println("Actual: " + actualPosition[i])
-                println("*******************")
-            }
         }
 
         /**
@@ -178,7 +151,12 @@ class MyHistoryRecyclerViewAdapter(
             val db = Room.databaseBuilder(holder.itemView.context, AppDatabase::class.java, "translateocr").build()
             val entry = Entry(item.id, item.timestamp, item.origText, item.destText, item.mode, item.code, !item.favorite)
             EntryViewModel(entryRepository = EntryRepository()).remove(db, entry)
-            values.removeAt(position)
+            try{
+                values.removeAt(position)
+            }
+            catch(exception: Exception){
+                println(exception)
+            }
             notifyItemRemoved(position)
         }
 

@@ -38,8 +38,6 @@ import edu.uoc.jjerezt.translateocr.runtime.db.AppDatabase
 import edu.uoc.jjerezt.translateocr.runtime.db.Entry
 import edu.uoc.jjerezt.translateocr.runtime.db.EntryRepository
 import edu.uoc.jjerezt.translateocr.runtime.db.EntryViewModel
-import edu.uoc.jjerezt.translateocr.runtime.dict.CopyRepository
-import edu.uoc.jjerezt.translateocr.runtime.dict.CopyViewModel
 import edu.uoc.jjerezt.translateocr.runtime.dict.Language
 import edu.uoc.jjerezt.translateocr.runtime.ocr.TesseractRecognition
 import edu.uoc.jjerezt.translateocr.runtime.ocr.Training
@@ -199,6 +197,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
          * Al prémer el botó, iniciem la traducció i mostrem la sortida
          */
         translateButton.setOnClickListener {
+            val inputManager = requireView().context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(origText.applicationWindowToken, 0)
             val textSortida = translate(root.rootView, origLanguage.selectedItem.toString(), destLanguage.selectedItem.toString(), origText.text.toString())
             // https://stackoverflow.com/questions/2116162/how-to-display-html-in-textview
             val spanned = HtmlCompat.fromHtml(textSortida, HtmlCompat.FROM_HTML_MODE_COMPACT)
