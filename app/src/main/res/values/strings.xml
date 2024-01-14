@@ -56,4 +56,6 @@
     <string name="exchange">Exchange languages</string>
     <string name="title_remove">Remove entry</string>
     <string name="countries_flags">Countries flags</string>
+    <string name="voice_synthesis">Voice synthesis</string>
+    <string name="voice_recognition">Voice recognition</string>
 </resources>
