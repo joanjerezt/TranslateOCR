@@ -39,8 +39,32 @@ class MyHistoryRecyclerViewAdapter(
         )
     }
 
-    private var favorites: Int = 0
     private val actualPosition: MutableMap<Int, Int> = ArrayMap()
+    private fun calcActualPosition(operation: Int, item: HistoryItem){
+        // OK
+        if(operation == 0) {
+            val mark = actualPosition[item.id]!!
+            for (i in values.indices) {
+                if (values[i].id == item.id) {
+                    actualPosition[item.id] = 0
+                } else if (mark < actualPosition[values[i].id]!!) {
+                    actualPosition[values[i].id] = actualPosition[values[i].id]!!
+                } else {
+                    actualPosition[values[i].id] = actualPosition[values[i].id]!! + 1
+                }
+            }
+        }
+        else if(operation == 2){
+            var number = 1
+            for (i in actualPosition.entries){
+                if(i.value > actualPosition[item.id]!!){
+                    actualPosition.replace(i.key, i.value-1)
+                    number += 1
+                }
+            }
+            actualPosition.remove(item.id)
+        }
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
@@ -82,7 +106,6 @@ class MyHistoryRecyclerViewAdapter(
          */
         if(values[position].favorite){
             holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_24)
-            favorites += 1
         }
         else{
             holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
@@ -92,7 +115,7 @@ class MyHistoryRecyclerViewAdapter(
          * S'inicialitzen les posicions originals dels registres
          */
         for ( i in values.indices){
-            actualPosition[i] = i
+            actualPosition[values[i].id] = i
         }
 
         /**
@@ -102,44 +125,34 @@ class MyHistoryRecyclerViewAdapter(
             val db = Room.databaseBuilder(holder.itemView.context, AppDatabase::class.java, "translateocr").build()
             val entry = Entry(item.id, item.timestamp, item.origText, item.destText, item.mode, item.code, !item.favorite)
             EntryViewModel(entryRepository = EntryRepository()).edit(db, entry)
-            /** DEBUG
-            * One element OK
-            * Two elements OK
-            * Three elements OK
-            */
+            var valuesIndex = 0
+            for(index in values.indices){
+                if(values[index].id == item.id){
+                    valuesIndex = index
+                    break
+                }
+            }
             // OK
-            if(values[position].favorite){
+            val favorite: Boolean = values[valuesIndex].favorite
+
+            if(favorite){
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_border_24)
                 println("Unmark original position $position")
-                favorites -= 1
             }
             // OK
             else{
                 holder.favorite.setBackgroundResource(R.drawable.baseline_favorite_24)
                 println("Mark original position $position")
-                notifyItemMoved(actualPosition[position]!!, 0)
-                favorites += 1
-                val mark = actualPosition[position]!!
-                for (i in values.indices){
-                    if(i == position){
-                        actualPosition[i] = 0
-                    }
-                    else if(mark < actualPosition[i]!!){
-                        actualPosition[i] = actualPosition[i]!!
-                    }
-                    else{
-                        if((actualPosition[i]!!+1)>values.size-1){
-                            notifyItemMoved(actualPosition[i]!!, values.size-1)
-                            actualPosition[i] = values.size-1
-                        }
-                        else{
-                            actualPosition[i] = actualPosition[i]!! + 1
-                        }
-
-                    }
-                }
+                notifyItemMoved(actualPosition[item.id]!!, 0)
+                calcActualPosition(0, item)
             }
-            values[position].favorite = !values[position].favorite
+
+            println("********************")
+            println("Original position: $position")
+            println("Actual position: $valuesIndex")
+            println("********************")
+
+            values[valuesIndex].favorite = !values[valuesIndex].favorite
             EntryViewModel(entryRepository = EntryRepository()).close(db)
         }
 
@@ -148,17 +161,20 @@ class MyHistoryRecyclerViewAdapter(
          */
 
         holder.remove.setOnClickListener {
-            val db = Room.databaseBuilder(holder.itemView.context, AppDatabase::class.java, "translateocr").build()
+            // val db = Room.databaseBuilder(holder.itemView.context, AppDatabase::class.java, "translateocr").build()
             val entry = Entry(item.id, item.timestamp, item.origText, item.destText, item.mode, item.code, !item.favorite)
-            EntryViewModel(entryRepository = EntryRepository()).remove(db, entry)
-            try{
-                values.removeAt(position)
+            // EntryViewModel(entryRepository = EntryRepository()).remove(db, entry)
+            for(index in values.indices){
+                if(values[index].id == item.id){
+                        values.removeAt(index)
+                        break
+                }
             }
-            catch(exception: Exception){
-                println(exception)
-            }
-            notifyItemRemoved(position)
+            notifyItemRemoved(actualPosition[item.id]!!)
+            calcActualPosition( 2, item)
         }
+
+
 
         /**
          * Es mostrarà un missatge emergent amb el text complet del camp
