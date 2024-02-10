@@ -80,7 +80,7 @@ public class TransducerExe {
   /**
    * Set of final node indexes
    */
-  private HashSet<Integer> final_ids = new HashSet<Integer>();
+  private final HashSet<Integer> final_ids = new HashSet<>();
 
   int getInitialId() {
     return initial_id;
@@ -96,17 +96,15 @@ public class TransducerExe {
 
   final State.TNodeState nodeStatePool_get() {
     int size = nodeStatePool.size();
+    State.TNodeState tn;
     if (size != 0) {
-      State.TNodeState tn = nodeStatePool.remove(size - 1);
+      tn = nodeStatePool.remove(size - 1);
       tn.sequence.clear();
-      //genbrugt++;
-      return tn;
     } else {
-      State.TNodeState tn = new State.TNodeState(this);
-      //oprettet++;
-      tn.sequence = new ArrayList<Integer>(State.INITAL_SEQUENCE_ALLOCATION);
-      return tn;
+      tn = new State.TNodeState(this);
+      tn.sequence = new ArrayList<>(State.INITAL_SEQUENCE_ALLOCATION);
     }
+    return tn;
   }
 
   final void nodeStatePool_release(State.TNodeState state_i) {
@@ -115,13 +113,15 @@ public class TransducerExe {
   }
 
   /**
-   * Note that this method is neccesarily very slow as the number of nodes increases, as the nodes don't (and for memory
-   * usage reasont shouldnt) know their own node number
+   * Note that this method is necessarily very slow as the number of nodes increases, as the nodes don't (and for memory
+   * usage reason shouldn't) know their own node number
    */
   public void show_DEBUG(Alphabet a) {
+    Node[] node_list = new Node[number_of_states];
     for (int i = 0; i < number_of_states; i++) {
       Node n = getNode(i);
-      //n.show_DEBUG(i, a, node_list);
+      /* node_list[i] = n;
+      / n.show_DEBUG(i, a, node_list); */
     }
   }
 
@@ -170,32 +170,13 @@ public class TransducerExe {
 
   public void read(ByteBuffer input, Alphabet alphabet, File cachedFile) throws IOException {
 
-/*
-  fpos_t pos;
-  if (fgetpos(input, &pos) == 0) {
-      char header[4]{};
-      fread(header, 1, 4, input);
-      if (strncmp(header, HEADER_TRANSDUCER, 4) == 0) {
-          auto features = read_le<uint64_t>(input);
-          if (features >= TDF_UNKNOWN) {
-              throw std::runtime_error("Transducer has features that are unknown to this version of lttoolbox - upgrade!");
-          }
-          read_weights = (features & TDF_WEIGHTS);
-      }
-      else {
-          // Old binary format
-          fsetpos(input, &pos);
-      }
-  }
-
- */
     input.mark();
     byte[] header = new byte[4];
     input.get(header);
     if (Arrays.equals(header, Compression.HEADER_TRANSDUCER)) {
       long features = input.getLong();
         if (FSTProcessor.DEBUG) System.err.println("TransducerExe.read() got features " + features);
-      if (features>=1) throw new IOException("FST has features that are unknown to this version of lttoolbox - upgrade!");
+      if (features>=(1 << 1)) throw new IOException("FST has features that are unknown to this version of lttoolbox - upgrade!");
     } else {
       // Old binary format
       input.reset();
@@ -217,7 +198,6 @@ public class TransducerExe {
       myfinals[i] = base;
     }
 
-    //System.err.println(ant1 + " ettere ud af  " + number_of_states);
     for (int i = 0; i < finals_size; i++) {
       int final_index = myfinals[i];
       final_ids.add(final_index);
@@ -226,7 +206,7 @@ public class TransducerExe {
     number_of_states = Compression.multibyte_read(input); // xx  (46191 for eo-en.dix)
 
     //node_list = new Node[number_of_states];
-    node_list2 = new HashMap<Integer, Node>(1000);
+    node_list2 = new HashMap<>(1000);
 
 
     // Keep reference to bytebuffer for delayed node loading
